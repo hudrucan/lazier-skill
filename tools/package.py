@@ -15,7 +15,7 @@ from zipfile import BadZipFile, ZIP_DEFLATED, ZipFile, ZipInfo
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILL = ROOT / "skills" / "codex-lazier"
-VERSION = "0.7.0"
+VERSION = "0.7.2"
 ARCHIVE = ROOT / "dist" / f"codex-lazier-{VERSION}.zip"
 
 
@@ -35,8 +35,16 @@ def source_paths():
     }
 
 
-C2C_PATHS = ("skill/references/workflow.md", "skill/references/workflow-web.md",
-             "skill/references/workflow-async.md", "LICENSE")
+C2C_PATHS = ("skill/SKILL.md", "skill/references/workflow.md", "skill/references/workflow-web.md",
+             "skill/references/workflow-async.md", "skill/references/operations.md",
+             "skill/references/setup.md", "skill/references/projects.md",
+             "skill/references/deprovision.md", "LICENSE")
+
+# Keep the upstream entrypoint as documentation without making it discoverable.
+C2C_PACKAGING = {
+    "renames": {"skill/SKILL.md": "codex-lazier/references/c2c/entrypoint.md"},
+    "link_rewrites": {"skill/references/setup.md": {"../SKILL.md": "../entrypoint.md"}},
+}
 
 
 def read_input(root, relative):
@@ -83,7 +91,13 @@ def c2c_files(source):
         require(content == git(source, "show", f"{lock['revision']}:{relative}"),
                 f"C2C working input differs from pinned commit: {relative}")
         require(hashlib.sha256(content).hexdigest() == expected, f"C2C hash mismatch: {relative}")
-        files["codex-lazier/references/c2c/" + Path(relative).name] = content
+        for old, new in C2C_PACKAGING["link_rewrites"].get(relative, {}).items():
+            original = f"({old})".encode()
+            require(content.count(original) == 1, f"Unexpected C2C reference link: {relative}")
+            content = content.replace(original, f"({new})".encode())
+        member = C2C_PACKAGING["renames"].get(
+            relative, "codex-lazier/references/c2c/" + relative.removeprefix("skill/"))
+        files[member] = content
     return files, lock
 
 
@@ -93,6 +107,7 @@ def source_files(c2c_source):
     bundled, lock = c2c_files(c2c_source)
     content.update(bundled)
     provenance = {"name": "codex-lazier", "version": VERSION, "c2c": lock,
+                  "c2c_packaging": C2C_PACKAGING,
                   "sha256": {name: hashlib.sha256(data).hexdigest()
                              for name, data in sorted(content.items())}}
     content["codex-lazier/provenance.json"] = (json.dumps(provenance, indent=2, sort_keys=True) + "\n").encode()
@@ -128,6 +143,8 @@ def validate_links(files):
 
 
 def validate_sources(files):
+    require([name for name in files if posixpath.basename(name).lower() == "skill.md"]
+            == ["codex-lazier/SKILL.md"], "Package must expose only the Lazier skill entrypoint")
     content = (SKILL / "SKILL.md").read_text(encoding="utf-8")
     match = re.match(r"\A---\n(.*?)\n---\n(.+)\Z", content, re.S)
     require(match is not None, "Missing manifest frontmatter or body")

@@ -1,6 +1,6 @@
 <div align="center">
 
-# codex-lazier 0.7.0
+# codex-lazier 0.7.2
 
 **Small changes. Complete solutions.**
 
@@ -155,10 +155,19 @@ Lazier works on its own. These integrations reuse tools you already have.
   manual fallback rules on failure and requires runtime/OAuth support and an
   accepted MCP result received by the terminal; it does not authorize commits,
   pushes or rollout.
-- **[Context Mode](https://github.com/mksglu/context-mode)** keeps large analysis
-  output out of the conversation. The Codex reference prefers installed `ctx_*`
-  tools and falls back to bounded native tools when unavailable. Small
-  observations and edits can stay direct.
+- **[codex-context-mode](https://github.com/hudrucan/codex-context-mode) v0.1.1**
+  keeps large analysis output out of the conversation. This Codex fork derives
+  from [context-mode by Mert Koseoğlu](https://github.com/mksglu/context-mode)
+  under Elastic License 2.0. Reuse the existing plugin
+  `codex-context-mode@hudrucan`: it bundles six skills (`main`, `doctor`, `index`,
+  `search`, `stats`, `purge`), six native hooks (`PreToolUse`, `PostToolUse`,
+  `SessionStart`, `PreCompact`, `UserPromptSubmit`, `Stop`) and one stdio MCP
+  named `codex-context-mode`, preserving the `ctx_*` tool names. Do not separately
+  register an MCP, copy skills, install user hooks or add symlinks. Keep mutable
+  runtime data in `~/.codex-context-mode/` (or its configured external root);
+  installing Lazier does not migrate, purge or modify that runtime or plugin.
+  The Codex reference prefers installed `ctx_*` tools and falls back to bounded
+  native tools when unavailable. Small observations and edits can stay direct.
 - **[TypeSafe Jev](https://docs.typesafe.ai/introduction/coding-agents)** offers
   a second opinion on substantial C2C decisions with meaningful technical
   trade-offs. Web normally asks once after inspecting constraints and evidence,
@@ -193,11 +202,17 @@ git diff --check
 ```
 
 On Windows use `py -3`. ZIP, SHA-256 and provenance sidecar go into ignored
-`dist/`; do not commit generated packages. Each ZIP has eleven files: the six
-Lazier files (entrypoint, UI metadata, policy, two adapters, LICENSE), three
-unmodified C2C workflows under `references/c2c/`, their LICENSE, and
+`dist/`; do not commit generated packages. Each ZIP has sixteen files: the six
+Lazier files (entrypoint, UI metadata, policy, two adapters, LICENSE), eight
+C2C Markdown references under `references/c2c/`, their LICENSE, and
 `provenance.json` identifying package version, C2C repository/revision/hashes and
-all packaged input hashes. No protocol copies live in Lazier source. Presence
+all packaged input hashes. The three C2C workflow contracts are unmodified. To
+prevent duplicate Skill discovery, the reference entrypoint is packaged as
+`entrypoint.md`, and its setup backlink is adjusted to that filename. Provenance
+records both packaging changes alongside the original source hashes and resulting
+packaged hashes. The sender's transitive diagnostic links still resolve offline.
+The only discoverable `SKILL.md` in the archive is Lazier's root entrypoint.
+No protocol copies live in Lazier source. Presence
 in the ZIP does not mean a reference should be loaded.
 
 Validation checks metadata/version, full local file/anchor closure, source identity,

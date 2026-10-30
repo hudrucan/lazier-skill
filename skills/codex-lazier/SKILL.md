@@ -12,8 +12,8 @@ Read and apply the [shared policy](references/policy.md), then the host referenc
 - **ChatGPT Web:** [Web guidance](references/web.md).
 
 For Web C2C prompt drafting or handoff audits, also read the bundled
-[common contract](references/c2c/workflow.md); audits additionally read the
-[receiver](references/c2c/workflow-web.md). Do not load sender or setup for Web.
+[common contract](references/c2c/references/workflow.md); audits additionally read the
+[receiver](references/c2c/references/workflow-web.md). Do not load sender or setup for Web.
 Codex C2C uses the installed native common contract and, only for explicit
 `auto=true`, its native sender as directed by the Codex reference; never mix
 that native contract with the bundled Web snapshot. Ordinary coding loads only

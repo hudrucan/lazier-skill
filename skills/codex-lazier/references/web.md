@@ -1,12 +1,12 @@
-## codex-lazier v0.7.0 — ChatGPT Web
+## codex-lazier v0.7.2 — ChatGPT Web
 
 Apply the [shared policy](policy.md), including optional Jev guidance, to coding,
 planning, audits, reviews and Codex repo handoffs without a manual skill call.
 Reuse guidance already read and still valid in this session; load only missing
 or changed guidance for the current host/mode; reread after missing/uncertain context.
 
-For C2C, read its [common contract](c2c/workflow.md)
-and, for handoff audits, its [Web receiver](c2c/workflow-web.md).
+For C2C, read its [common contract](c2c/references/workflow.md)
+and, for handoff audits, its [Web receiver](c2c/references/workflow-web.md).
 Use these bundled files offline; GitHub is provenance only. Prompt drafting
 needs common; audits add receiver. Do not read sender/setup. Missing required
 contracts block C2C: report the missing path without guessing, switching

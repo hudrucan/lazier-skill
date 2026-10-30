@@ -1,4 +1,4 @@
-## codex-lazier v0.7.0 — Codex
+## codex-lazier v0.7.2 — Codex
 
 Read and apply the [shared policy](policy.md), including its optional Jev
 guidance, to every coding task without a manual skill call.
@@ -32,6 +32,15 @@ adds no runtime dependency.
 
 ### Context Mode
 
+- Reuse the installed `codex-context-mode` v0.1.1 plugin
+  (`codex-context-mode@hudrucan`), derived from Mert Koseoğlu's upstream
+  `context-mode`. It bundles six skills (`main`, `doctor`, `index`, `search`,
+  `stats`, `purge`), six native hooks (`PreToolUse`, `PostToolUse`, `SessionStart`,
+  `PreCompact`, `UserPromptSubmit`, `Stop`) and one MCP named `codex-context-mode`.
+  Preserve `ctx_*` tool names and external runtime data in `~/.codex-context-mode/`
+  (or its configured external root). Do not add standalone MCP registrations,
+  copied skills, user hooks or symlinks. Inspect Windows installations read-only
+  when diagnosing bindings; report mismatches without changing installations.
 - Use native tools for precise bounded searches/reads and edits; prefer installed
   `ctx_*` tools for large/unpredictable output and verbose tests.
 - Discover as needed: `ctx_execute_file` analyzes files, `ctx_execute` handles one

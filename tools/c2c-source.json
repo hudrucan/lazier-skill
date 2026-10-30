@@ -1,10 +1,15 @@
 {
   "repository": "https://github.com/hudrucan/codex-with-chatgpt",
-  "revision": "ab70efb9bc166196e43879407ace6f9228840a8b",
+  "revision": "676dd7a68ce2b6ffad8c7df4aa76cb493927b405",
   "files": {
-    "skill/references/workflow.md": "691d4c5d58bd5b1cb52c3dc15655936b75c48f1692d0b855a1ef983f9cd2ec59",
+    "skill/SKILL.md": "32cd18bb804ebb8d8a15958b984bbbd979aa424803a82e4e6e6501e946e8c2d4",
+    "skill/references/workflow.md": "ed90a2e6b029dec110f5487f3d01fd0e1f0216eb3aaed1d41efacff1bc771286",
     "skill/references/workflow-web.md": "8f51dc95cbffe00ce035be875d6c07c40c9ea6bf0d0d71f96ef97001bfad53c4",
-    "skill/references/workflow-async.md": "02f0b3ca92a440bdf0072f2163979e3af26b177bb42df3b076511b41704024f4",
+    "skill/references/workflow-async.md": "b09e102679d3c396cad4dfc53ce752d103524476ae4f73267d31edea7bb2b450",
+    "skill/references/operations.md": "43bd6bc55d797f0671b5fdb90cc78b3430b278be9d81a977695bd98a01097fe5",
+    "skill/references/setup.md": "5587876a48daa0dc678e2a6810246345c1d5aa749618fb21656525485a3c1cdd",
+    "skill/references/projects.md": "b90e571d8de1ce59a4e38183dad3fa5909c314c92961f17e41ec969a9fe092d4",
+    "skill/references/deprovision.md": "796c36a7c14cfb652df045c4e74d83fc53559ce25463ee211be5f85f4426dd31",
     "LICENSE": "4b18c7291304dc84d601a6305053e9a68b3f39877f27434556f30e184eb834b5"
   }
 }

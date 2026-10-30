@@ -50,7 +50,7 @@
     {
       "id": "missing-reference",
       "host": "Web",
-      "prompt": "Use codex-lazier to draft a C2C Task. The evaluator has removed references/c2c/workflow.md from the extracted artifact.",
+      "prompt": "Use codex-lazier to draft a C2C Task. The evaluator has removed references/c2c/references/workflow.md from the extracted artifact.",
       "observe": [
         "Disclose the missing required path and block C2C; no guessed contract, network lookup, reconnect or alternate repo.",
         "Ordinary non-C2C work remains usable in a separate ordinary prompt."

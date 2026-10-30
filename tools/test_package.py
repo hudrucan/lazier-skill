@@ -52,7 +52,7 @@ class PackageValidationTests(unittest.TestCase):
                 self.assertIn("guidance already read and still valid in this session", content)
         web = (skill / "references/web.md").read_text(encoding="utf-8")
         for reference in ["workflow.md", "workflow-web.md"]:
-            self.assertIn("c2c/" + reference, web)
+            self.assertIn("c2c/references/" + reference, web)
         self.assertIn("automatic `[C2C Handoff]` audits", web)
         for transport_detail in ["C2C_CALLBACK", "capability", "timeoutMs", "callback register"]:
             self.assertNotIn(transport_detail, web)
@@ -194,9 +194,14 @@ class PackageValidationTests(unittest.TestCase):
                     "codex-lazier/references/policy.md", "codex-lazier/references/web.md",
                     "codex-lazier/references/codex.md", "codex-lazier/LICENSE",
                     "codex-lazier/provenance.json", "codex-lazier/references/c2c/LICENSE",
-                    "codex-lazier/references/c2c/workflow.md",
-                    "codex-lazier/references/c2c/workflow-web.md",
-                    "codex-lazier/references/c2c/workflow-async.md",
+                    "codex-lazier/references/c2c/entrypoint.md",
+                    "codex-lazier/references/c2c/references/workflow.md",
+                    "codex-lazier/references/c2c/references/workflow-web.md",
+                    "codex-lazier/references/c2c/references/workflow-async.md",
+                    "codex-lazier/references/c2c/references/operations.md",
+                    "codex-lazier/references/c2c/references/setup.md",
+                    "codex-lazier/references/c2c/references/projects.md",
+                    "codex-lazier/references/c2c/references/deprovision.md",
                 ])
                 for reference in ["policy.md", "codex.md", "web.md"]:
                     self.assertEqual(bundle.read("codex-lazier/references/" + reference),
@@ -205,6 +210,7 @@ class PackageValidationTests(unittest.TestCase):
                 installed = root / "installed"
                 bundle.extractall(installed)
             skill = (installed / "codex-lazier").resolve()
+            self.assertEqual(list(skill.rglob("SKILL.md")), [skill / "SKILL.md"])
             links = re.findall(r"\[[^\]]*\]\(([^)]+)\)",
                                (skill / "SKILL.md").read_text(encoding="utf-8"))
             for reference in ["policy", "codex", "web"]:
@@ -245,6 +251,15 @@ class PinnedContractTests(unittest.TestCase):
         return subprocess.run([sys.executable, str(self.root / "tools/package.py"),
                                "--c2c-source", str(self.source), *args], capture_output=True, text=True)
 
+    def test_nested_skill_entrypoints_are_rejected(self):
+        module = runpy.run_path(str(self.root / "tools/package.py"))
+        files = module["source_files"](self.source)
+        for name in ["SKILL.md", "skill.md"]:
+            with self.subTest(name=name):
+                nested = {**files, f"codex-lazier/references/c2c/{name}": b"---\nname: duplicate\n---\n"}
+                with self.assertRaisesRegex(ValueError, "only the Lazier skill entrypoint"):
+                    module["validate_sources"](nested)
+
     def rejected(self, message):
         result = self.run_package("--build")
         self.assertNotEqual(result.returncode, 0, result.stdout)
@@ -267,7 +282,8 @@ class PinnedContractTests(unittest.TestCase):
 
     def test_missing_changed_and_symlinked_source(self):
         source = Path(self.temp.name) / "source"
-        subprocess.run(["git", "clone", "--quiet", "--shared", "--no-checkout", str(C2C_SOURCE), str(source)], check=True)
+        subprocess.run(["git", "clone", "--quiet", "--shared", "--no-checkout",
+                        "--config", "core.autocrlf=false", str(C2C_SOURCE), str(source)], check=True)
         revision = json.loads((ROOT / "tools/c2c-source.json").read_text())["revision"]
         subprocess.run(["git", "-C", str(source), "checkout", "--quiet", "--detach", revision], check=True)
         subprocess.run(["git", "-C", str(source), "remote", "set-url", "origin",
@@ -294,7 +310,7 @@ class PinnedContractTests(unittest.TestCase):
                         "https://github.com/unverified/other"], check=True)
         self.rejected("identity mismatch")
         self.source = source / "missing"
-        self.rejected("No such file")
+        self.rejected("[WinError 2]" if sys.platform == "win32" else "No such file")
 
     def test_missing_guidance_links_anchors_and_symlinks(self):
         target = self.root / "skills/codex-lazier/SKILL.md"
@@ -347,14 +363,14 @@ class PinnedContractTests(unittest.TestCase):
             original = [(info, bundle.read(info.filename)) for info in bundle.infolist()]
         with ZipFile(archive, "w") as bundle:
             for info, content in original:
-                if info.filename == "codex-lazier/references/c2c/workflow.md":
+                if info.filename == "codex-lazier/references/c2c/references/workflow.md":
                     content += b"\nUnpinned rule.\n"
                 bundle.writestr(info, content)
         with ZipFile(archive) as bundle:
             self.assertIsNone(bundle.testzip())
         result = self.run_package()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Stale archive content: codex-lazier/references/c2c/workflow.md", result.stderr)
+        self.assertIn("Stale archive content: codex-lazier/references/c2c/references/workflow.md", result.stderr)
 
     def test_detached_artifact_closure_identity_license_crc_and_staleness(self):
         result = self.run_package("--build")
@@ -366,19 +382,30 @@ class PinnedContractTests(unittest.TestCase):
             with ZipFile(archive) as bundle:
                 bundle.extractall(directory)
             installed = Path(directory)
-            files = {str(p.relative_to(installed)): p.read_bytes() for p in installed.rglob("*") if p.is_file()}
+            files = {p.relative_to(installed).as_posix(): p.read_bytes()
+                     for p in installed.rglob("*") if p.is_file()}
             # Deliberately remove access to the copied source before validating the extraction.
             shutil.rmtree(self.root / "skills")
             module["validate_links"](files)
             provenance = json.loads(files["codex-lazier/provenance.json"])
             self.assertEqual(provenance["version"], module["VERSION"])
             self.assertEqual(provenance["c2c"], json.loads((ROOT / "tools/c2c-source.json").read_text()))
+            self.assertEqual(provenance["c2c_packaging"], {
+                "renames": {"skill/SKILL.md": "codex-lazier/references/c2c/entrypoint.md"},
+                "link_rewrites": {"skill/references/setup.md": {"../SKILL.md": "../entrypoint.md"}},
+            })
             self.assertEqual(set(provenance["sha256"]), set(files) - {"codex-lazier/provenance.json"})
             for name, digest in provenance["sha256"].items():
                 self.assertEqual(hashlib.sha256(files[name]).hexdigest(), digest)
-            for name in ["workflow.md", "workflow-web.md", "workflow-async.md", "LICENSE"]:
-                source = C2C_SOURCE / ("LICENSE" if name == "LICENSE" else "skill/references/" + name)
-                self.assertEqual(files["codex-lazier/references/c2c/" + name], source.read_bytes())
+            for relative in provenance["c2c"]["files"]:
+                member = "codex-lazier/references/c2c/" + relative.removeprefix("skill/")
+                expected = (C2C_SOURCE / relative).read_bytes()
+                self.assertEqual(hashlib.sha256(expected).hexdigest(), provenance["c2c"]["files"][relative])
+                if relative == "skill/SKILL.md":
+                    member = "codex-lazier/references/c2c/entrypoint.md"
+                elif relative == "skill/references/setup.md":
+                    expected = expected.replace(b"(../SKILL.md)", b"(../entrypoint.md)")
+                self.assertEqual(files[member], expected)
         shutil.copytree(ROOT / "skills", self.root / "skills")
         self.assertEqual(self.run_package("--build").returncode, 0)
         self.assertEqual(archive.read_bytes(), before)
