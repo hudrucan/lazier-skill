@@ -75,6 +75,42 @@
       ]
     },
     {
+      "id": "auto-initial-stale",
+      "host": "Codex",
+      "prompt": "[C2C Task]\nauto=true\nRepo: fixture; hubId: hub-fixture; workspaceId: fixture-id. Initial mocked browser binding reports ASYNC_BROWSER_BINDING_STALE before any controller exists. The same browser/tab/conversation identity is known and the host supports a REPL-only reset preserving drafts. Recovery succeeds with an empty composer.",
+      "observe": [
+        "Read native common and sender. Apply its single initialization reset/rebind, verify the same identity and empty composer before controller creation; never navigate or open a conversation.",
+        "Continue one attempt under its original deadline; no second reset, replacement sender after controller creation or delivery retry."
+      ]
+    },
+    {
+      "id": "auto-verification-read",
+      "host": "Codex",
+      "prompt": "[C2C Task]\nauto=true\nRepo: fixture; hubId: hub-fixture; workspaceId: fixture-id. The mocked native sender has pinned a conversation; its pre-fill URL/composer verification gets ETIMEDOUT once, then succeeds with the same URL and empty draft.",
+      "observe": [
+        "Delegate the one additional read-only verification to the native sender within the original deadline; do not duplicate its transport logic in Lazier.",
+        "No reset/rebind, fill or Enter during recovery. A post-fill failure stops without read or delivery retry; preserve the sending state and manual fallback."
+      ]
+    },
+    {
+      "id": "auto-mcp-read",
+      "host": "Web",
+      "prompt": "[C2C Handoff]\nauto=true\nRepo: fixture; hubId: hub-fixture; workspaceId: fixture-id. Use a new mocked callback envelope and deadline. A read-only MCP call times out once; a git_diff page has a known snapshot_id. The fixture also includes a lost initial diff response without a snapshot ID and a tool denial.",
+      "observe": [
+        "Read bundled common and receiver. Retry the eligible read once with identical connector/workspace/arguments and verify the original revision; git_diff retains snapshot_id and offset.",
+        "Do not retry a lost first diff response without snapshot_id or a tool denial; never mix changed revisions. Preserve the deadline and report ERROR or BLOCKED under the receiver contract, never fabricate PASS."
+      ]
+    },
+    {
+      "id": "auto-callback-retry",
+      "host": "Web",
+      "prompt": "[C2C Handoff]\nauto=true\nRepo: fixture; hubId: hub-fixture; workspaceId: fixture-id. A new mocked callback envelope contains C2C_DEADLINE. submit_audit_result has an ambiguous transport timeout. Evaluate valid, absent and expired deadline fixtures separately.",
+      "observe": [
+        "Read bundled common and receiver. Check the original deadline immediately before at most one identical callback retry, retaining the same ticket and serialized result; no re-audit or new registration.",
+        "No retry with an absent/unverifiable/expired deadline, after accepted:true, a tool error/denial or a second transport failure. No browser resend or callback-wait retry; only matching mocked MCP acceptance and terminal receipt prove completion."
+      ]
+    },
+    {
       "id": "auto-register-failure",
       "host": "Codex",
       "prompt": "[C2C Task]\nauto=true\nRepo: fixture; connector: Foundation; hubId: hub-fixture; workspaceId: fixture-id. Apply the supplied fixture edit. Mock registration fails with EPERM. Return the original complete handoff for manual copying; do not commit.",

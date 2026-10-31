@@ -1,6 +1,6 @@
 <div align="center">
 
-# codex-lazier 0.7.2
+# codex-lazier 0.7.3
 
 **Small changes. Complete solutions.**
 
@@ -224,7 +224,9 @@ installed artifact must observe smoke success before calling it daily-ready.
 Live MCP/terminal E2E acceptance is a separate result, never implied by packaging.
 
 The [CI workflow](.github/workflows/ci.yml) checks out C2C at the exact pinned
-revision with read-only permissions and no persisted credentials. It builds,
+revision with read-only permissions and no persisted credentials. That commit must
+be available on the remote C2C repository for CI checkout; local packaging remains
+offline with the verified checkout. It builds,
 checks reproducibility and validates downloaded release assets. Only the tag-only
 release job can publish ZIP, checksum and provenance. Tags must match
 `v<VERSION>` in `tools/package.py`; update that value and the three guidance

@@ -68,6 +68,9 @@ class PackageValidationTests(unittest.TestCase):
         for host in ["codex", "web"]:
             text = (skill / f"references/{host}.md").read_text(encoding="utf-8")
             self.assertIn("manual fallback", text)
+            self.assertIn("C2C's bounded recovery", text)
+            self.assertIn("Never resend", text)
+            self.assertNotRegex(text, r"without retrying|do not retry or")
             self.assertIn("invent", text)
         matrix = json.loads((ROOT / "tools/smoke-cases.json").read_text())
         cases = {case["id"]: case for case in matrix["cases"]}
@@ -75,6 +78,10 @@ class PackageValidationTests(unittest.TestCase):
         self.assertIn("auto=false", cases["manual"]["prompt"])
         for case_id in ["auto", "auto-register-failure", "auto-uncertain-send", "auto-callback-failure"]:
             self.assertIn("auto=true", cases[case_id]["prompt"])
+        for case_id in ["auto-initial-stale", "auto-verification-read",
+                        "auto-mcp-read", "auto-callback-retry"]:
+            self.assertIn("auto=true", cases[case_id]["prompt"])
+            self.assertIn("deadline", " ".join(cases[case_id]["observe"]).lower())
         for case_id, delivery in [("auto-register-failure", "not_sent"),
                                   ("auto-uncertain-send", "uncertain"),
                                   ("auto-callback-failure", "sent")]:
@@ -426,7 +433,7 @@ class PinnedContractTests(unittest.TestCase):
         self.assertEqual(re.findall(r"ref: ([0-9a-f]{40})", ci), [lock["revision"]] * 2)
         matrix = json.loads((ROOT / "tools/smoke-cases.json").read_text())
         self.assertEqual(matrix["status"], "pending")
-        self.assertEqual(len({case["id"] for case in matrix["cases"]}), 11)
+        self.assertEqual(len({case["id"] for case in matrix["cases"]}), 15)
         self.assertTrue(all(case["prompt"] and case["observe"] for case in matrix["cases"]))
 
 
