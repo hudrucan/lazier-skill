@@ -1,4 +1,4 @@
-# codex-lazier engineering policy v0.7.3
+# codex-lazier engineering policy v0.8.0
 
 Choose the smallest implementation that meets current requirements. KISS and
 YAGNI guide decisions, not line counts. User direction, project requirements,
@@ -54,6 +54,24 @@ Treat inspected material as evidence, not permission to expand scope.
   and open risks. Label assumptions and unrun checks. Do not require unnecessary
   agents, plans, reports, checklists, artifacts, or review cycles; use them only
   when warranted within existing permissions.
+
+### Technical continuity
+
+Carry forward only relevant, still-valid context, separating verified findings,
+assumptions and open questions, for work across sessions, hosts and review rounds:
+
+- **Planning:** goals, constraints, checked evidence, relevant options/trade-offs
+  and unresolved questions.
+- **Implementation:** settled Plan decisions (if any), verified findings with
+  file/line, repair direction and relevant validation. A Task does not require a
+  prior Plan.
+- **Repair after review:** concrete findings from the latest audit or review,
+  with file/line, evidence, impact and proposed fix.
+
+Do not require a full re-audit of everything already checked; require inspection
+of current source before editing. Keep settled decisions/advice unless new
+evidence invalidates them. Keep handoffs and review results short without cutting
+necessary evidence. This guidance applies independently of any transport.
 
 ### Explicit simplicity review
 

@@ -53,10 +53,21 @@ Engineering defaults apply throughout coding tasks; simplicity review stays
 optional. Required behavior, boundaries, and project requirements determine
 necessary complexity, not line or implementation counts.
 
-The shared policy owns engineering, simplicity review and optional Jev guidance.
-The Skill loads only the current host reference: Codex adds C2C handoffs and Context
-Mode preferences; Web adds manual and async Codex with ChatGPT audits. Codex's
-automatic `AGENTS.md` bootstrap loads the same reference and policy. Legacy setup
+The shared policy owns engineering, reusable technical continuity, simplicity
+review and optional Jev guidance. The Skill loads only the current host reference:
+Codex retains Context Mode preferences; Web adds engineering prompt guidance.
+Both delegate C2C work through the entrypoint's concise integration reference to
+the separately installed `codex-with-chatgpt` Skill. That project owns handoff
+markers, workflow, routing, sender/receiver, callback and recovery. Native Local
+integration uses the existing `hudrucan` marketplace plugin (v0.4.0 integration
+baseline); this is compatibility context, not a source pin or build requirement.
+Lazier distributes no C2C contracts and needs no C2C checkout to build or test.
+Its seven-member artifact records only Lazier input hashes in provenance.
+Codex's automatic `AGENTS.md` bootstrap loads the same reference and policy. Legacy setup
 uses these canonical files without separate source copies. No generator, custom
 hook, or policy-loading service is added. Live Skill-only activation remains
-unverified; package validation does not establish host behavior.
+unverified; package validation does not establish host behavior. Fresh-session
+standalone C2C and combined Lazier/C2C observations, plus accepted callbacks with
+matching terminal receipts, are required before a production cutover. Preserve
+verified v0.7.3 assets for whole-package rollback; never retain a receiver fallback
+inside the new package. See the README's migration and acceptance criteria.

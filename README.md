@@ -1,6 +1,6 @@
 <div align="center">
 
-# codex-lazier 0.7.3
+# codex-lazier 0.8.0
 
 **Small changes. Complete solutions.**
 
@@ -29,7 +29,7 @@ verify the behavior that matters.
 - **Keep it grounded.** Base decisions and review findings on source evidence.
   Run relevant checks and state what remains unverified.
 
-The package is instructions: one Skill, two host adapters, a pinned C2C Web snapshot, and a
+The package is instructions: one Skill, two host adapters, and a
 [shared policy](skills/codex-lazier/references/policy.md). No daemon, custom hook,
 or runtime dependency. Simplicity reviews run only when you ask.
 
@@ -81,8 +81,9 @@ Preserve existing guidance and check for an active `AGENTS.override.md`.
 
 Start a new session and ask Codex to summarize its loaded instructions.
 Installing the Skill alone does not activate persistent instructions.
-The [Codex reference](skills/codex-lazier/references/codex.md) owns C2C handoffs
-and Context Mode preferences. For a legacy installation that copied Lazier into
+The [Codex reference](skills/codex-lazier/references/codex.md) applies engineering
+policy, delegates C2C to its separate Skill, and retains Context Mode preferences.
+For a legacy installation that copied Lazier into
 `AGENTS.md`, replace only that Lazier block with the bootstrap above. Keep the
 installed references together; do not maintain another policy copy.
 
@@ -92,12 +93,13 @@ installed references together; do not maintain another policy copy.
 
 1. Where Skill uploads are supported, install the release ZIP as a ChatGPT Skill.
 2. Start a new conversation and check that `codex-lazier` is available. The Skill
-   loads its Web reference for coding and automatic C2C handoff audits.
+   loads its Web reference for engineering work. C2C work uses the separately
+   installed `codex-with-chatgpt` Web Skill.
 3. Keep MCP connector, Hub and workspace routing in **Project Instructions**.
    Lazier behavior comes from the installed Skill.
 
 For hosts without Skill support, make the complete extracted reference tree
-available offline (including `references/c2c/`), and optionally select the existing
+available offline, and optionally select the existing
 [policy](skills/codex-lazier/references/policy.md) and
 [Web reference](skills/codex-lazier/references/web.md) available as Project sources
 and instruct the Project to apply them with their task-specific references. Disclose if the
@@ -146,15 +148,14 @@ Lazier works on its own. These integrations reuse tools you already have.
 
 - **[Codex with ChatGPT](https://github.com/hudrucan/codex-with-chatgpt)** connects Web planning
   and audits with Codex implementation. It owns repository access and the
-  handoff contract. The Web ZIP bundles its pinned canonical files;
-  [source pin](tools/c2c-source.json) records the revision and hashes. Codex uses
-  the separately installed native C2C contract.
-  The [Web reference](skills/codex-lazier/references/web.md) covers automatic
-  handoff audits, manual Fix/Commit prompts and opt-in `auto=true` delivery;
-  omitted `auto` or `auto=false` stays manual. Automatic delivery follows C2C's
-  manual fallback rules on failure and requires runtime/OAuth support and an
-  accepted MCP result received by the terminal; it does not authorize commits,
-  pushes or rollout.
+  entire handoff workflow, routing, sender/receiver, callback and recovery.
+  Install its Web Skill separately; for Codex Local, reuse the native C2C plugin
+  (`codex-with-chatgpt@hudrucan`, v0.4.0 integration baseline) and its own setup
+  guidance. Lazier's [integration reference](skills/codex-lazier/SKILL.md#c2c-integration)
+  delegates to the installed C2C entrypoint without bundling, fetching or pinning
+  its contracts. Missing C2C blocks only C2C work; ordinary engineering and
+  packaging remain usable. C2C preserves selected routing and `auto=true` under
+  its own contract; installing Lazier grants no connection or delivery permission.
 - **[codex-context-mode](https://github.com/hudrucan/codex-context-mode) v0.1.1**
   keeps large analysis output out of the conversation. This Codex fork derives
   from [context-mode by Mert Koseoğlu](https://github.com/mksglu/context-mode)
@@ -187,52 +188,73 @@ Host support determines Skill discovery and invocation. Optional integrations
 need their own configuration and permissions; installing Lazier grants neither.
 Context Mode installation alone does not prove routing or enforcement.
 
+## Upgrading from v0.7.3
+
+v0.8.0 removes the bundled C2C receiver. Before a production cutover, verify the
+separate C2C Web Skill and native Local integration. Retain the verified v0.7.3
+ZIP, checksum and provenance as rollback assets. New builds use versioned
+filenames and leave those assets unchanged.
+
+When an installation update is authorized, replace the complete Lazier package
+at its existing location; do not overlay it or add a second discovery root.
+This removes stale `references/c2c/` files. Keep the existing AGENTS bootstrap,
+Project routing, C2C/Context Mode installations and host configuration. Start a
+fresh session so cached receiver instructions cannot conceal a missing C2C Skill.
+Rollback restores the complete verified v0.7.3 package at that same location,
+then starts a fresh session; the new ZIP contains no fallback contract.
+
+Production acceptance requires separate evidence for standalone C2C without the
+old Lazier receiver and for the candidate Lazier plus C2C in fresh sessions.
+Record artifact hashes, independent C2C versions, loaded paths and tool traces.
+An Auto C2C E2E pass requires correctly routed MCP source review, an unchanged
+source fingerprint, `submit_audit_result` returning `accepted:true`, and the
+matching terminal result for the same Hub/workspace/task/attempt/handoff within
+the original deadline. Required audits must end in PASS; unresolved FIX,
+BLOCKED, ERROR, drift, timeout or a missing receipt blocks cutover. A plan-only
+audit need not produce a code diff. A chat PASS, MCP READY, packaging success or
+callback acceptance without its terminal receipt is insufficient. Recovery and
+fallback remain C2C's responsibility. No fresh-session or live E2E PASS is
+established by the package tests.
+
 ## Development
 
-Python 3.9+ and its standard library are enough. Supply an explicit local C2C
-checkout whose origin, HEAD and allowlisted inputs match [the pin](tools/c2c-source.json).
-Builds never fetch or execute C2C code, and never use a different working tree
-silently. With that checkout already available, all commands run offline:
+Python 3.9+ and its standard library are enough. Builds and tests run offline
+from Lazier source alone, without Git, a C2C checkout, network or installed C2C:
 
 ```sh
-python3 tools/test_package.py --c2c-source /path/to/pinned-c2c
-python3 tools/package.py --c2c-source /path/to/pinned-c2c --build
-python3 tools/package.py --c2c-source /path/to/pinned-c2c
+python3 tools/test_package.py
+python3 tools/package.py --build
+python3 tools/package.py
 git diff --check
 ```
 
 On Windows use `py -3`. ZIP, SHA-256 and provenance sidecar go into ignored
-`dist/`; do not commit generated packages. Each ZIP has sixteen files: the six
-Lazier files (entrypoint, UI metadata, policy, two adapters, LICENSE), eight
-C2C Markdown references under `references/c2c/`, their LICENSE, and
-`provenance.json` identifying package version, C2C repository/revision/hashes and
-all packaged input hashes. The three C2C workflow contracts are unmodified. To
-prevent duplicate Skill discovery, the reference entrypoint is packaged as
-`entrypoint.md`, and its setup backlink is adjusted to that filename. Provenance
-records both packaging changes alongside the original source hashes and resulting
-packaged hashes. The sender's transitive diagnostic links still resolve offline.
-The only discoverable `SKILL.md` in the archive is Lazier's root entrypoint.
-No protocol copies live in Lazier source. Presence
-in the ZIP does not mean a reference should be loaded.
+`dist/`; do not commit generated packages. Each ZIP has exactly seven files:
+the six Lazier files (entrypoint, UI metadata, policy, two adapters, LICENSE) and
+`provenance.json`. Provenance contains only `name`, `version` and `sha256` hashes
+for the six packaged inputs; the sidecar must match its embedded bytes.
+The only discoverable `SKILL.md` is Lazier's root entrypoint. All local links
+resolve within the package; the external C2C installation reference is not a
+build dependency or an offline receiver. No C2C contracts or source pin are bundled.
 
-Validation checks metadata/version, full local file/anchor closure, source identity,
-pinned bytes, symlinks/containment, CRCs, stale content/sidecars and reproducibility.
+Validation checks metadata/version, full local file/anchor closure, source bytes,
+symlinks/containment, member allowlist and types, CRCs, stale content/sidecars and
+reproducibility. Negative regression includes missing/duplicate/extra members,
+path escapes, missing inputs, symlinked inputs/outputs and corrupted payloads.
 Tests extract into an independent directory; reading Web guidance needs no source
-checkout, network or MCP. Model smoke cases are in [the smoke matrix](tools/smoke-cases.json);
+checkout, network or MCP. Reading the independent C2C contracts requires that
+Skill to be installed separately. Model smoke cases are in [the smoke matrix](tools/smoke-cases.json);
 structural assertions do not prove model behavior. A new session using the actually
 installed artifact must observe smoke success before calling it daily-ready.
 Live MCP/terminal E2E acceptance is a separate result, never implied by packaging.
 
-The [CI workflow](.github/workflows/ci.yml) checks out C2C at the exact pinned
-revision with read-only permissions and no persisted credentials. That commit must
-be available on the remote C2C repository for CI checkout; local packaging remains
-offline with the verified checkout. It builds,
+The [CI workflow](.github/workflows/ci.yml) checks out only Lazier with read-only
+permissions and no persisted credentials. It builds,
 checks reproducibility and validates downloaded release assets. Only the tag-only
 release job can publish ZIP, checksum and provenance. Tags must match
 `v<VERSION>` in `tools/package.py`; update that value and the three guidance
-headings together. Updating the C2C snapshot requires a verified full commit,
-allowlist hashes and preserved license; never pin uncommitted changes or mutable
-`main`/`latest`.
+headings and README version together. C2C versions and protocol validation are
+owned by that separate project, not by Lazier's packaging or CI.
 
 Contributions should stay focused, preserve the Skill contract, and include
 checks appropriate to the change.
@@ -240,4 +262,4 @@ checks appropriate to the change.
 ## License
 
 [MIT](LICENSE). See [research and provenance](RESEARCH.md) for the references
-behind the policy. The pinned C2C text and its MIT notice are bundled; no upstream executable code is bundled.
+behind the policy. No upstream C2C text or executable code is bundled.
