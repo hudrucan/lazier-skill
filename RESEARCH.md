@@ -30,7 +30,13 @@ license assessment, including notices on the particular files being copied.
 - [Codex skills](https://developers.openai.com/codex/skills) documents user and
   repository discovery, explicit/implicit selection and optional OpenAI metadata.
 - [Claude skills](https://code.claude.com/docs/en/skills) documents its own personal
-  and project discovery and invocation. No live Claude session was run for this draft.
+  and project discovery and invocation. Live Claude discovery has not been verified.
+- [Antigravity skills](https://antigravity.google/docs/skills) identifies the shared
+  global skill directory under `~/.gemini/config/skills/`, separately from workspace
+  `.agents/skills/`. Its directory-symlink discovery is not assumed by the installer.
+- [Grok Build skills](https://docs.x.ai/build/features/skills-plugins-marketplaces)
+  documents user-level compatibility discovery from `~/.agents/skills/`, allowing
+  Codex and Grok to share one installation rather than adding a native duplicate.
 - [Codex instruction discovery](https://developers.openai.com/codex/guides/agents-md)
   describes persistent user and project guidance. It does not turn a discoverable
   skill into mandatory policy automatically.
@@ -40,12 +46,17 @@ license assessment, including notices on the particular files being copied.
 
 ## Refactor decisions
 
-The 0.9.0 release uses the name `lazier`, one portable entrypoint and one
+The 0.10.0 release uses the name `lazier`, one portable entrypoint and one
 shared engineering policy. It preserves scope, correctness, proportionate testing,
 technical continuity and optional simplicity review. It adds English documentation
 and project-scoped working artifacts while retaining canonical product docs.
 
-Host-specific Codex/Web references and the retired C2C workflow are removed.
+The only installer targets are Codex, Claude Code, Antigravity and Grok Build.
+Target path mapping belongs to `tools/install.py`; no host selection, adapter or
+target-specific policy is added to the skill. The installer exports the same
+provenance-verified payload to native discovery roots and supports dry-run and
+isolated homes. It does not change agent settings or persistent instructions.
+Host-specific Codex/Web references and the retired C2C workflow remain removed.
 TypeSafe/Jev integration is owned by the separate `typesafe-ai` skill; no API
 guidance or mandatory advisor step is bundled. Installed context tools are selected
 by capability under current host instructions, without pinning a fork or version.

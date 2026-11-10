@@ -1,4 +1,4 @@
-# lazier engineering policy v0.9.0
+# lazier engineering policy v0.10.0
 
 Choose the smallest implementation that meets current requirements. KISS and
 YAGNI guide decisions, not line counts. User direction, project requirements,

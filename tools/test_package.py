@@ -372,4 +372,6 @@ class ArtifactIntegrityTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    suite = unittest.defaultTestLoader.discover(str(ROOT / "tools"), pattern="test_*.py")
+    result = unittest.TextTestRunner().run(suite)
+    sys.exit(0 if result.wasSuccessful() else 1)
