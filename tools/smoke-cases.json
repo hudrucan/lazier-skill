@@ -22,7 +22,7 @@
     },
     {
       "id": "implicit",
-      "prompt": "Using the fixture's existing persistent lazier instruction, correct its typo. Do not invoke a skill manually or commit.",
+      "prompt": "Correct the typo in the fixture's README.md. Do not invoke a skill manually or commit.",
       "observe": [
         "Load the same common policy through the host-supported persistent instruction.",
         "Make the authorized edit without requiring another host's adapter or invocation syntax."
@@ -91,7 +91,7 @@
     },
     {
       "id": "project-destination",
-      "prompt": "The fixture's project instructions designate an existing ignored .local/reports directory. From a nested package directory, save the requested investigation there.",
+      "prompt": "From packages/kvparse, investigate the failing parser test and save the report to the ignored directory the project instructions designate.",
       "observe": [
         "Use the designated project-root destination rather than creating nested or default artifact directories.",
         "Write English documentation and preserve unrelated ignore entries and project files."
