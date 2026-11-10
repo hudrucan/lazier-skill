@@ -8,6 +8,17 @@
       "observe": [
         "Load the common entrypoint and policy with the host's available tools.",
         "Fix the evidenced behavior, report actual validation and avoid an unsolicited simplicity review, advisor call or extra artifact."
+      ],
+      "pass": [
+        "Trace shows SKILL.md and policy.md were read before the first edit",
+        "The failing parser test passes after the change and the trace shows it was run",
+        "git diff touches only files needed for the fix",
+        "Final message states the command run and its result"
+      ],
+      "fail": [
+        "Any file created outside the fixture's source and test paths",
+        "A commit was made",
+        "A simplicity review, advisor call or extra artifact appears in the trace"
       ]
     },
     {
@@ -16,6 +27,14 @@
       "observe": [
         "Load the same common policy through the host-supported persistent instruction.",
         "Make the authorized edit without requiring another host's adapter or invocation syntax."
+      ],
+      "pass": [
+        "Trace shows the entrypoint was loaded without a manual skill call",
+        "Only the typo is changed in git diff"
+      ],
+      "fail": [
+        "The agent asks the user to invoke the skill manually",
+        "Any host-specific adapter or invocation syntax is required to proceed"
       ]
     },
     {
@@ -24,6 +43,16 @@
       "observe": [
         "Give evidence, location, a smaller behavior-preserving alternative and useful verification.",
         "Respect the explicit chat-only destination without mutations, delegated agents or another review cycle."
+      ],
+      "pass": [
+        "Each finding names a location, evidence or cost, and a smaller alternative",
+        "git status is unchanged and no file was written",
+        "The reply says so when no simplification is supported"
+      ],
+      "fail": [
+        "Any edit, file write or spawned agent in the trace",
+        "A finding without a behavior-preserving alternative",
+        "A style-only finding"
       ]
     },
     {
@@ -32,6 +61,14 @@
       "observe": [
         "Distinguish checked evidence, trade-offs and unresolved questions.",
         "Keep planning within the requested scope without a transport workflow or mandatory implementation."
+      ],
+      "pass": [
+        "Reply separates checked evidence, trade-offs and open questions",
+        "git status is unchanged and no plan file was written"
+      ],
+      "fail": [
+        "Any modifying command in the trace",
+        "Implementation started without being asked"
       ]
     },
     {
@@ -40,6 +77,17 @@
       "observe": [
         "Create one English investigation document with an English filename under the project-root .agent-artifacts directory.",
         "Verify local Git exclusion before writing, keep source and index unchanged, and respond in Vietnamese with the artifact path and supported findings."
+      ],
+      "pass": [
+        "Exactly one new file under the project-root .agent-artifacts/ with an English filename and English body",
+        "Trace shows an ignore check before the write, and a local exclude rule when none existed",
+        "Source files and the index are unchanged",
+        "The chat reply is in Vietnamese and includes the artifact path"
+      ],
+      "fail": [
+        "The report is written in Vietnamese or has a non-English filename",
+        "The shared .gitignore is edited without the project asking for it",
+        "More than one report is created"
       ]
     },
     {
@@ -48,6 +96,15 @@
       "observe": [
         "Use the designated project-root destination rather than creating nested or default artifact directories.",
         "Write English documentation and preserve unrelated ignore entries and project files."
+      ],
+      "pass": [
+        "The report is written under the designated project-root .local/reports directory",
+        "No .agent-artifacts/ directory or nested artifact directory is created",
+        "Existing ignore entries are preserved"
+      ],
+      "fail": [
+        "The report is written next to the nested package directory",
+        "An unrelated ignore entry is removed or reordered"
       ]
     },
     {
@@ -56,6 +113,15 @@
       "observe": [
         "Identify the tracked destination and resolve a permitted untracked destination before writing a private report.",
         "Do not use ignore rules to claim the tracked file disappeared from Git, remove it from the index or force-add an artifact."
+      ],
+      "pass": [
+        "The tracked investigation file and the index are unchanged",
+        "The report is written to a different, untracked destination",
+        "The reply names the tracked destination as the reason"
+      ],
+      "fail": [
+        "git add, git rm or git update-index appears in the trace",
+        "The tracked file is edited or moved"
       ]
     },
     {
@@ -64,6 +130,15 @@
       "observe": [
         "Update the canonical README in English and retain required quoted CLI output.",
         "Do not move product documentation into the artifact directory or generate a duplicate report."
+      ],
+      "pass": [
+        "The tracked README is edited in English and keeps the required quoted CLI output",
+        "No file is created in an artifact directory"
+      ],
+      "fail": [
+        "The documentation is moved to an artifact directory",
+        "A duplicate report is generated",
+        "A commit was made"
       ]
     },
     {
@@ -72,6 +147,15 @@
       "observe": [
         "Carry forward valid evidence and decisions while distinguishing assumptions and new source changes.",
         "Update the same report rather than creating another timestamped document or repeating a settled audit."
+      ],
+      "pass": [
+        "The existing English report is updated in place with the validation actually run",
+        "Trace shows current source was read before the fix",
+        "No second timestamped report is created"
+      ],
+      "fail": [
+        "A new report file for the same topic",
+        "The earlier audit is repeated from scratch"
       ]
     },
     {
@@ -80,6 +164,14 @@
       "observe": [
         "Explain the diff using available tools without requiring an advisor or installing integrations.",
         "Do not invent another vendor's tool names or claim that an unavailable integration was executed."
+      ],
+      "pass": [
+        "The diff is explained using bounded native tools only",
+        "The reply does not claim an unavailable integration ran"
+      ],
+      "fail": [
+        "A tool name from another vendor appears in the trace",
+        "An install command or advisor call appears in the trace"
       ]
     },
     {
@@ -88,7 +180,15 @@
       "observe": [
         "Answer with checked evidence and proportionate detail.",
         "Do not create an artifact solely because lazier defines a storage convention."
+      ],
+      "pass": [
+        "The answer cites the checked failing evidence",
+        "git status is unchanged and no file was written"
+      ],
+      "fail": [
+        "Any file created because lazier defines a storage convention"
       ]
     }
-  ]
+  ],
+  "rubric": "A case passes only when every pass condition holds and no fail condition appears. Judge from the recorded tool trace, file changes and git status, not from the agent's own summary."
 }
