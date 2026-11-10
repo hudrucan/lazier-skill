@@ -37,7 +37,7 @@ Policy ownership is independent of context-mode; TypeSafe/Jev guidance stays in
 | Scope | Evidence and limits |
 | --- | --- |
 | Package and installer | Integrity, reference closure, reproducibility, safe installation and a disposable-home 0.10.0-to-0.11.0 upgrade checked. These do not prove model behavior. |
-| Agent behavior | [Latest audits](audits/README.md) keep one record per agent, including [Codex](audits/codex.json). Each record states its tested version, exact payload, scope, results and limits. Missing agent records mean unverified. |
+| Agent behavior | [Latest audits](audits/README.md) keep one record per agent, including [Codex](audits/codex.json) and [Antigravity](audits/agy.json). Each record states its tested version, exact payload, scope, results and limits. Missing agent records mean unverified. |
 
 The [smoke matrix](tools/smoke-cases.json) contains shared definitions, not verdicts.
 Consult the relevant agent audit for open conditions and replace it after retesting;

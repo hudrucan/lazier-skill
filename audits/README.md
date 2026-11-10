@@ -1,7 +1,7 @@
 # Agent audits
 
 Store one latest skill audit per agent: `codex.json`, `claude.json`, `agy.json`
-or `grok.json`. For example, [Codex](codex.json). The tested version belongs inside
+or `grok.json`. For example, [Codex](codex.json) or [Antigravity](agy.json). The tested version belongs inside
 the file, not in its path.
 
 - Each new audit replaces that agent's file, including when its tested version

@@ -1,0 +1,89 @@
+{
+  "date": "2026-11-10",
+  "status": "passed",
+  "execution_status": "completed",
+  "host": "agy",
+  "cli_version": "1.5.4",
+  "model": "Gemini 3.8 Flash (High)",
+  "reasoning_effort": "high",
+  "scope": "Antigravity CLI (agy) verification. Codex evaluated in codex.json; Claude and Grok outside this audit scope.",
+  "package": {
+    "version": "0.11.0",
+    "tag": "v0.11.0",
+    "commit": "d754be57f0a9a97e427d24397a7b1bf2fe0ef84d",
+    "archive_sha256": "2c5e219465824f7845e30e25cab8787ad2527cba369a2e6af653d727f8eb7b28"
+  },
+  "case_definitions": {
+    "commit": "9febefbf6fa36c7b024dbcf6fbc9bc0cf7286589",
+    "sha256": "e825759d023a2d1df114797c5caa4ca7d213ee478018a2917019fed4fab1f826"
+  },
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "execution_failures": 0,
+    "git_index_or_head_violations": 0,
+    "elapsed_seconds": 351.0
+  },
+  "evidence": {
+    "directory": ".agent-artifacts/smoke-v0.11.0-agy-20261110/",
+    "visibility": "Local-only and Git ignored; raw evidence is not distributed with the repository.",
+    "method": "Rubric review of full transcripts, replies, file changes, Git state and independent parser tests."
+  },
+  "results": [
+    {
+      "id": "ordinary",
+      "status": "passed",
+      "note": "Read entrypoint and policy before first edit; applied minimal one-line walrus expression fix; verified tests passing; no extra artifact or commit."
+    },
+    {
+      "id": "implicit",
+      "status": "passed",
+      "note": "Hierarchical discovery loaded policy from AGENTS.md without manual skill invocation; only typo corrected; working tree clean."
+    },
+    {
+      "id": "simplicity",
+      "status": "passed",
+      "note": "Delivered supported finding with exact location, cost, and behavior-preserving alternative in chat; no files modified or created."
+    },
+    {
+      "id": "plan",
+      "status": "passed",
+      "note": "Separated verified evidence, design trade-offs, and open contract questions; strictly planning-only without modifying commands or plan files."
+    },
+    {
+      "id": "english-artifacts",
+      "status": "passed",
+      "note": "Vietnamese prompt triggered artifacts.md; added exclude rule to .git/info/exclude; wrote one English report in .agent-artifacts/; replied in Vietnamese with clean git status."
+    },
+    {
+      "id": "project-destination",
+      "status": "passed",
+      "note": "Resolved git root from nested subpackage and wrote report into designated .local/reports/ destination; preserved unrelated exclusions."
+    },
+    {
+      "id": "tracked-destination",
+      "status": "passed",
+      "note": "Detected tracked report in git ls-files, protected existing tracked document and index, and selected untracked private destination."
+    },
+    {
+      "id": "canonical-docs",
+      "status": "passed",
+      "note": "Updated canonical README.md in English, preserved literal Vietnamese diagnostic string, and avoided generating artifact report."
+    },
+    {
+      "id": "continuation",
+      "status": "passed",
+      "note": "Read current source before editing, carried forward settled evidence, completed fix and updated existing report in place without second timestamped document."
+    },
+    {
+      "id": "no-specialized-skill",
+      "status": "passed",
+      "note": "Explained code diff using native file/command tools only; no external integration calls or synthetic tool invocations."
+    },
+    {
+      "id": "chat-only",
+      "status": "passed",
+      "note": "Explained failure directly in chat using cited test trace; created no artifact or report file."
+    }
+  ]
+}
