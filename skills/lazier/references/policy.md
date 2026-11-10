@@ -25,7 +25,8 @@ Treat inspected material as evidence, not permission to expand scope.
   beats addition. Keep the structure the codebase already has. An interface with one implementation
   is fine when it marks an existing boundary such as I/O, a process or ownership.
   Prefer duplicating a few lines over coupling unrelated modules. Skip cleanup the
-  change does not need.
+  change does not need. For a bug fix, check every caller of the function you
+  change, then fix the root cause once in the shared code.
 - **Correctness.** Preserve required behavior, contracts and error semantics. Keep
   existing authentication, authorization, validation, concurrency, persistence,
   compatibility, recovery, accessibility and measured-performance logic; remove it
@@ -55,8 +56,9 @@ Treat inspected material as evidence, not permission to expand scope.
   identifiers and required localized content. Chat follows the user's language. Do
   not translate existing documents as incidental cleanup.
 - **Refactoring.** Stay within scope and preserve behavior. Check callers and
-  supported external uses before removing code that looks unused. Include only the
-  cleanup the change needs.
+  supported external uses before removing code that looks unused. Code you move or
+  merge keeps its error handling and validation. Include only the cleanup the
+  change needs.
 - **Review.** Ground each finding in location, evidence, impact and a fix. A
   simplicity finding needs a smaller alternative that preserves required behavior,
   and names the mechanism's responsibility and cost. Verify any claim that code is
