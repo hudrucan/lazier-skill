@@ -36,9 +36,12 @@ Treat inspected material as evidence, not permission to expand scope.
   failure. Never report a failure as success.
 - **Testing.** Add regression tests for changed observable behavior, failures and
   invariants, using the project's existing tools and fixtures, and no more than the
-  change puts at risk. Avoid duplicate assertions and checks on private details or
-  call order. Never weaken an assertion to make a refactor pass. Run the checks
-  that apply to the risk; reuse earlier results until a change invalidates them.
+  change puts at risk. Avoid duplicate assertions and checks on private
+  implementation details or incidental call order, but do test ordering that is
+  part of the contract, such as authorizing before writing, validating before
+  committing, or releasing a resource only after use. Never weaken an assertion to
+  make a refactor pass. Run the checks that apply to the risk; reuse earlier
+  results until a change invalidates them.
 - **Evidence.** Capture relevant evidence in full before filtering or summarizing
   it. Keep failures, exit status and source locations; never truncate or filter
   away a failure before analysis. Do not present incomplete evidence as successful
