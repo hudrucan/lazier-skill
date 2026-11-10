@@ -80,6 +80,18 @@ Preserve existing guidance and follow the host's instruction precedence.
 This repository's [AGENTS.md](AGENTS.md) shows a project bootstrap. The installer
 does not edit global instructions, settings, hooks or permission controls.
 
+**Claude Code** reads `CLAUDE.md`, not `AGENTS.md`. A project that already keeps
+its instructions in `AGENTS.md` can add a `CLAUDE.md` containing `@AGENTS.md`, as
+this repository does. For a user-wide setting, add one line to
+`~/.claude/CLAUDE.md`, for example:
+
+```text
+For engineering tasks, read and apply ~/.claude/skills/lazier/SKILL.md once per session.
+```
+
+Without this line, Claude Code makes the skill available but decides on its own
+whether to load it; `/lazier` always loads it.
+
 ## What it changes
 
 | Default | What it means in practice |

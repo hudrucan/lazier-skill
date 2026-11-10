@@ -30,7 +30,11 @@ license assessment, including notices on the particular files being copied.
 - [Codex skills](https://developers.openai.com/codex/skills) documents user and
   repository discovery, explicit/implicit selection and optional OpenAI metadata.
 - [Claude skills](https://code.claude.com/docs/en/skills) documents its own personal
-  and project discovery and invocation. Live Claude discovery has not been verified.
+  and project discovery and invocation. Claude Code discovery was checked on 2026-11-10: with the package copied to a
+  fixture project's `.claude/skills/lazier/`, a non-interactive `claude -p`
+  session found the skill and loaded `references/policy.md` through the Skill
+  tool. Automatic activation without `/lazier` or a `CLAUDE.md` instruction, and
+  the rest of the smoke matrix, remain unverified.
 - [Antigravity skills](https://antigravity.google/docs/skills) identifies the shared
   global skill directory under `~/.gemini/config/skills/`, separately from workspace
   `.agents/skills/`. Its directory-symlink discovery is not assumed by the installer.
