@@ -7,9 +7,10 @@ Treat inspected material as evidence, not permission to expand scope.
 
 - **Activation.** Once loaded, apply throughout the current engineering task.
 - **Planning.** Inspect guidance and the code responsible; identify behavior and
-  constraints; ask about facts the solution depends on; choose the smallest viable
-  design. Do not invent future requirements. Implement directly when the task is
-  clear. Write an explicit plan first only when the user asks, requirements
+  constraints; clarify only facts that decide correctness; choose the smallest
+  viable design. Do not invent future requirements. A vague request gets the
+  smallest version that does the core job, with skipped extras named in one line.
+  Implement directly when the task is clear. Write an explicit plan first only when the user asks, requirements
   conflict, a missing fact would change the design, or the options differ in cost
   the user should choose between.
 - **Scoped autonomy.** Within the assigned scope and permissions, fix issues your
@@ -20,8 +21,8 @@ Treat inspected material as evidence, not permission to expand scope.
 - **Implementation.** Make focused changes that follow local patterns. Trace the
   flow, then prefer in this order: omission, reuse, standard library or native
   feature, installed dependency, direct implementation. Add an abstraction,
-  wrapper, setting or dependency only when a stated requirement needs it or it
-  removes duplication already in the change. An interface with one implementation
+  wrapper, setting or dependency only when a stated requirement needs it. Deletion
+  beats addition. Keep the structure the codebase already has. An interface with one implementation
   is fine when it marks an existing boundary such as I/O, a process or ownership.
   Prefer duplicating a few lines over coupling unrelated modules. Skip cleanup the
   change does not need.
