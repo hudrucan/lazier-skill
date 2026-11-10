@@ -13,9 +13,10 @@ from zipfile import BadZipFile, ZIP_DEFLATED, ZipFile, ZipInfo
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SKILL = ROOT / "skills" / "codex-lazier"
-VERSION = "0.8.0"
-ARCHIVE = ROOT / "dist" / f"codex-lazier-{VERSION}.zip"
+NAME = "lazier"
+SKILL = ROOT / "skills" / NAME
+VERSION = "0.9.0"
+ARCHIVE = ROOT / "dist" / f"{NAME}-{VERSION}.zip"
 
 
 def require(condition, message):
@@ -25,12 +26,10 @@ def require(condition, message):
 
 def source_paths():
     return {
-        "codex-lazier/SKILL.md": SKILL / "SKILL.md",
-        "codex-lazier/agents/openai.yaml": SKILL / "agents/openai.yaml",
-        "codex-lazier/references/policy.md": SKILL / "references/policy.md",
-        "codex-lazier/references/codex.md": SKILL / "references/codex.md",
-        "codex-lazier/references/web.md": SKILL / "references/web.md",
-        "codex-lazier/LICENSE": ROOT / "LICENSE",
+        f"{NAME}/SKILL.md": SKILL / "SKILL.md",
+        f"{NAME}/agents/openai.yaml": SKILL / "agents/openai.yaml",
+        f"{NAME}/references/policy.md": SKILL / "references/policy.md",
+        f"{NAME}/LICENSE": ROOT / "LICENSE",
     }
 
 
@@ -49,10 +48,10 @@ def read_input(root, relative):
 def source_files():
     files = source_paths()
     content = {name: read_input(ROOT, str(source.relative_to(ROOT))) for name, source in files.items()}
-    provenance = {"name": "codex-lazier", "version": VERSION,
+    provenance = {"name": NAME, "version": VERSION,
                   "sha256": {name: hashlib.sha256(data).hexdigest()
                              for name, data in sorted(content.items())}}
-    content["codex-lazier/provenance.json"] = (json.dumps(provenance, indent=2, sort_keys=True) + "\n").encode()
+    content[f"{NAME}/provenance.json"] = (json.dumps(provenance, indent=2, sort_keys=True) + "\n").encode()
     return content
 
 
@@ -77,7 +76,7 @@ def validate_links(files):
             path, _, fragment = target.partition("#")
             member = posixpath.normpath(posixpath.join(posixpath.dirname(name), path)) if path else name
             require(not path.startswith("/") and "\\" not in path
-                    and member.startswith("codex-lazier/") and member in files,
+                    and member.startswith(f"{NAME}/") and member in files,
                     f"Broken package link in {name}: {target}")
             if fragment:
                 require(fragment in anchors(files[member].decode()),
@@ -86,7 +85,7 @@ def validate_links(files):
 
 def validate_sources(files):
     require([name for name in files if posixpath.basename(name).lower() == "skill.md"]
-            == ["codex-lazier/SKILL.md"], "Package must expose only the Lazier skill entrypoint")
+            == [f"{NAME}/SKILL.md"], "Package must expose only the lazier skill entrypoint")
     content = (SKILL / "SKILL.md").read_text(encoding="utf-8")
     match = re.match(r"\A---\n(.*?)\n---\n(.+)\Z", content, re.S)
     require(match is not None, "Missing manifest frontmatter or body")
@@ -122,9 +121,8 @@ def validate_sources(files):
     require(all(json.loads(value).strip() for value in interface.groups()),
             "Interface metadata strings must not be empty")
 
-    for name in ["policy", "codex", "web"]:
-        heading = files[f"codex-lazier/references/{name}.md"].decode().splitlines()[0]
-        require(f"v{VERSION}" in heading.split(), f"Version heading mismatch: {name}")
+    heading = files[f"{NAME}/references/policy.md"].decode().splitlines()[0]
+    require(f"v{VERSION}" in heading.split(), "Version heading mismatch: policy")
     validate_links(files)
     packaged_paths = set(source_paths().values())
     for source in ROOT.rglob("*.md"):
@@ -155,7 +153,7 @@ def build(files):
             info.external_attr = 0o100644 << 16
             info.compress_type = ZIP_DEFLATED
             archive.writestr(info, content, compresslevel=9)
-    ARCHIVE.with_suffix(".provenance.json").write_bytes(files["codex-lazier/provenance.json"])
+    ARCHIVE.with_suffix(".provenance.json").write_bytes(files[f"{NAME}/provenance.json"])
     digest = hashlib.sha256(ARCHIVE.read_bytes()).hexdigest()
     ARCHIVE.with_suffix(".sha256").write_text(f"{digest}  {ARCHIVE.name}\n", encoding="utf-8")
 
@@ -174,7 +172,7 @@ def validate_archive(files):
     digest = hashlib.sha256(ARCHIVE.read_bytes()).hexdigest()
     require(ARCHIVE.with_suffix(".sha256").read_text(encoding="utf-8") == f"{digest}  {ARCHIVE.name}\n",
             "Archive checksum mismatch")
-    require(ARCHIVE.with_suffix(".provenance.json").read_bytes() == files["codex-lazier/provenance.json"],
+    require(ARCHIVE.with_suffix(".provenance.json").read_bytes() == files[f"{NAME}/provenance.json"],
             "Stale archive provenance")
     print(f"PASS: metadata, local links, {len(files)} archive files, CRCs, source bytes, SHA-256\n{digest}")
 

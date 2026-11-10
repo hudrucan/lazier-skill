@@ -18,43 +18,15 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 class PackageValidationTests(unittest.TestCase):
-    def test_shared_continuity_and_separate_c2c_integration(self):
-        skill = ROOT / "skills/codex-lazier"
-        policy = " ".join((skill / "references/policy.md").read_text(encoding="utf-8").split())
-        continuity = policy.split("### Technical continuity", 1)[1].split("###", 1)[0]
-        for requirement in ["goals", "constraints", "checked evidence", "options/trade-offs",
-                            "unresolved questions", "settled Plan decisions", "file/line",
-                            "repair direction", "validation", "latest audit or review",
-                            "evidence", "impact", "proposed fix", "assumptions and open questions",
-                            "current source before editing", "independently of any transport"]:
-            with self.subTest(requirement=requirement):
-                self.assertIn(requirement, continuity)
-        entry = (skill / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("separately installed `codex-with-chatgpt` Skill", entry)
-        self.assertIn("auto=true", entry)
-        self.assertIn("ordinary engineering and Lazier packaging remain independent", entry)
-        description = re.search(r"^description: (.+)$", entry, re.M)[1]
-        self.assertNotRegex(description, r"C2C|callback|submit_audit_result")
-        for name in ["SKILL.md", "references/codex.md", "references/web.md"]:
-            text = " ".join((skill / name).read_text(encoding="utf-8").split())
-            with self.subTest(name=name):
-                self.assertIn("guidance already read and still valid in this session", text)
-                self.assertNotRegex(text, r"references/c2c/|workflow(?:-web|-async)?\.md|C2C_CALLBACK|submit_audit_result")
-        for host in ["codex", "web"]:
-            self.assertIn("../SKILL.md#c2c-integration",
-                          (skill / f"references/{host}.md").read_text(encoding="utf-8"))
-        self.assertIn("policy.md#technical-continuity",
-                      (skill / "references/web.md").read_text(encoding="utf-8"))
-
     def test_skill_links_must_resolve_in_the_installed_package(self):
-        with TemporaryDirectory(prefix="codex-lazier-links-") as directory:
+        with TemporaryDirectory(prefix="lazier-links-") as directory:
             root = Path(directory)
             shutil.copytree(ROOT / "skills", root / "skills")
             shutil.copyfile(ROOT / "LICENSE", root / "LICENSE")
             (root / "tools").mkdir()
             shutil.copyfile(ROOT / "tools/package.py", root / "tools/package.py")
             (root / "README.md").write_text("Repository-only documentation.\n", encoding="utf-8")
-            manifest = root / "skills/codex-lazier/SKILL.md"
+            manifest = root / "skills/lazier/SKILL.md"
             original = manifest.read_text(encoding="utf-8")
             for target in ["references/missing.md", "../../README.md"]:
                 with self.subTest(target=target):
@@ -68,15 +40,15 @@ class PackageValidationTests(unittest.TestCase):
                     self.assertFalse((root / "dist").exists())
 
     def test_interface_text_can_change_without_weakening_validation(self):
-        with TemporaryDirectory(prefix="codex-lazier-metadata-") as directory:
+        with TemporaryDirectory(prefix="lazier-metadata-") as directory:
             root = Path(directory)
             shutil.copytree(ROOT / "skills", root / "skills")
             shutil.copyfile(ROOT / "LICENSE", root / "LICENSE")
             (root / "tools").mkdir()
             shutil.copyfile(ROOT / "tools/package.py", root / "tools/package.py")
-            metadata = root / "skills/codex-lazier/agents/openai.yaml"
+            metadata = root / "skills/lazier/agents/openai.yaml"
             original = metadata.read_text(encoding="utf-8")
-            changed = re.sub(r'(?m)^  display_name:.*$', '  display_name: "Codex Lazier"', original)
+            changed = re.sub(r'(?m)^  display_name:.*$', '  display_name: "lazier"', original)
             changed = re.sub(r'(?m)^  short_description:.*$', '  short_description: "Review engineering complexity"', changed)
             changed = re.sub(r'(?m)^  default_prompt:.*$', '  default_prompt: "Review the supplied design."', changed)
             cases = [("changed UI text", changed, True),
@@ -86,7 +58,7 @@ class PackageValidationTests(unittest.TestCase):
                 cases.append((f"missing {field}", re.sub(rf"(?m)^  {field}:.*\n", "", original), False))
                 cases.append((f"empty {field}", re.sub(rf"(?m)^  {field}:.*$", f'  {field}: " "', original), False))
             cases.append(("invalid quoted string", re.sub(r'(?m)^  display_name:.*$',
-                                                          '  display_name: "Codex "Lazier""', original), False))
+                                                          '  display_name: "Codex "lazier""', original), False))
             for label, content, valid in cases:
                 with self.subTest(label=label):
                     metadata.write_text(content, encoding="utf-8")
@@ -100,13 +72,13 @@ class PackageValidationTests(unittest.TestCase):
                         self.assertIn("FAIL:", result.stderr)
 
     def test_description_with_unquoted_colon_is_rejected(self):
-        with TemporaryDirectory(prefix="codex-lazier-regression-") as directory:
+        with TemporaryDirectory(prefix="lazier-regression-") as directory:
             root = Path(directory)
             shutil.copytree(ROOT / "skills", root / "skills")
             shutil.copyfile(ROOT / "LICENSE", root / "LICENSE")
             (root / "tools").mkdir()
             shutil.copyfile(ROOT / "tools/package.py", root / "tools/package.py")
-            manifest = root / "skills/codex-lazier/SKILL.md"
+            manifest = root / "skills/lazier/SKILL.md"
             manifest.write_text(re.sub(
                 r"(?m)^description:.*$",
                 "description: Review changes: keep them simple.",
@@ -122,7 +94,7 @@ class PackageValidationTests(unittest.TestCase):
             self.assertNotIn("PASS:", result.stdout)
 
     def test_distribution_includes_current_references_and_rejects_stale_bytes(self):
-        with TemporaryDirectory(prefix="codex-lazier-archive-") as directory:
+        with TemporaryDirectory(prefix="lazier-archive-") as directory:
             root = Path(directory)
             shutil.copytree(ROOT / "skills", root / "skills")
             shutil.copyfile(ROOT / "LICENSE", root / "LICENSE")
@@ -149,22 +121,21 @@ class PackageValidationTests(unittest.TestCase):
             before = archive.read_bytes()
             with ZipFile(archive) as bundle:
                 self.assertCountEqual(bundle.namelist(), [
-                    "codex-lazier/SKILL.md", "codex-lazier/agents/openai.yaml",
-                    "codex-lazier/references/policy.md", "codex-lazier/references/web.md",
-                    "codex-lazier/references/codex.md", "codex-lazier/LICENSE",
-                    "codex-lazier/provenance.json",
+                    "lazier/SKILL.md", "lazier/agents/openai.yaml",
+                    "lazier/references/policy.md", "lazier/LICENSE",
+                    "lazier/provenance.json",
                 ])
-                for reference in ["policy.md", "codex.md", "web.md"]:
-                    self.assertEqual(bundle.read("codex-lazier/references/" + reference),
-                                     (root / "skills/codex-lazier/references" / reference).read_bytes())
-                self.assertEqual(bundle.read("codex-lazier/LICENSE"), (root / "LICENSE").read_bytes())
+                for reference in ["policy.md"]:
+                    self.assertEqual(bundle.read("lazier/references/" + reference),
+                                     (root / "skills/lazier/references" / reference).read_bytes())
+                self.assertEqual(bundle.read("lazier/LICENSE"), (root / "LICENSE").read_bytes())
                 installed = root / "installed"
                 bundle.extractall(installed)
-            skill = (installed / "codex-lazier").resolve()
+            skill = (installed / "lazier").resolve()
             self.assertEqual(list(skill.rglob("SKILL.md")), [skill / "SKILL.md"])
             links = re.findall(r"\[[^\]]*\]\(([^)]+)\)",
                                (skill / "SKILL.md").read_text(encoding="utf-8"))
-            for reference in ["policy", "codex", "web"]:
+            for reference in ["policy"]:
                 self.assertIn(f"references/{reference}.md", links)
             for source in skill.rglob("*.md"):
                 for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", source.read_text(encoding="utf-8")):
@@ -175,9 +146,9 @@ class PackageValidationTests(unittest.TestCase):
             self.assertEqual(run("--build").returncode, 0)
             self.assertEqual(archive.read_bytes(), before, "Build must be reproducible")
 
-            for name in ["policy", "codex", "web"]:
+            for name in ["policy"]:
                 with self.subTest(stale_reference=name):
-                    reference = root / f"skills/codex-lazier/references/{name}.md"
+                    reference = root / f"skills/lazier/references/{name}.md"
                     reference.write_text(reference.read_text(encoding="utf-8") + "\nNew default.\n", encoding="utf-8")
                     stale = run()
                     self.assertNotEqual(stale.returncode, 0)
@@ -206,8 +177,8 @@ class ArtifactIntegrityTests(unittest.TestCase):
         files = module["source_files"]()
         for name in ["SKILL.md", "skill.md"]:
             with self.subTest(name=name):
-                nested = {**files, f"codex-lazier/references/nested/{name}": b"---\nname: duplicate\n---\n"}
-                with self.assertRaisesRegex(ValueError, "only the Lazier skill entrypoint"):
+                nested = {**files, f"lazier/references/nested/{name}": b"---\nname: duplicate\n---\n"}
+                with self.assertRaisesRegex(ValueError, "only the lazier skill entrypoint"):
                     module["validate_sources"](nested)
 
     def rejected(self, message):
@@ -217,21 +188,21 @@ class ArtifactIntegrityTests(unittest.TestCase):
         self.assertFalse((self.root / "dist").exists())
 
     def test_missing_guidance_links_anchors_and_symlinks(self):
-        target = self.root / "skills/codex-lazier/SKILL.md"
+        target = self.root / "skills/lazier/SKILL.md"
         original = target.read_bytes()
-        for link in ["references/missing.md", "../../README.md", "references/codex.md#missing",
-                     "/etc/passwd", "%2e%2e/%2e%2e/README.md", "../codex-with-chatgpt/SKILL.md",
+        for link in ["references/missing.md", "../../README.md", "references/policy.md#missing",
+                     "/etc/passwd", "%2e%2e/%2e%2e/README.md", "../other-skill/SKILL.md",
                      "C:/Windows/win.ini", "references\\\\policy.md"]:
             with self.subTest(link=link):
                 target.write_bytes(original + f"\n[Required]({link})\n".encode())
                 self.rejected("Broken package")
         target.unlink()
         self.rejected("Missing input")
-        target.symlink_to(ROOT / "skills/codex-lazier/SKILL.md")
+        target.symlink_to(ROOT / "skills/lazier/SKILL.md")
         self.rejected("input")
         target.unlink()
         target.write_bytes(original)
-        refs = self.root / "skills/codex-lazier/references"
+        refs = self.root / "skills/lazier/references"
         moved = refs.with_name("refs-original")
         refs.rename(moved)
         refs.symlink_to(moved, target_is_directory=True)
@@ -245,12 +216,12 @@ class ArtifactIntegrityTests(unittest.TestCase):
                     module["read_input"](self.root, relative)
 
     def test_metadata_version_and_license_cannot_disagree(self):
-        entry = self.root / "skills/codex-lazier/SKILL.md"
+        entry = self.root / "skills/lazier/SKILL.md"
         original = entry.read_text()
         entry.write_text(original.replace("license: MIT", "license: Apache"))
         self.rejected("License must match")
         entry.write_text(original)
-        policy = self.root / "skills/codex-lazier/references/policy.md"
+        policy = self.root / "skills/lazier/references/policy.md"
         version = runpy.run_path(str(self.root / "tools/package.py"))["VERSION"]
         policy.write_text(policy.read_text().replace(f"v{version}", "v0.0.0", 1))
         self.rejected("Version heading mismatch")
@@ -287,14 +258,14 @@ class ArtifactIntegrityTests(unittest.TestCase):
             original = [(info, bundle.read(info.filename)) for info in bundle.infolist()]
         with ZipFile(archive, "w") as bundle:
             for info, content in original:
-                if info.filename == "codex-lazier/references/policy.md":
+                if info.filename == "lazier/references/policy.md":
                     content += b"\nChanged rule.\n"
                 bundle.writestr(info, content)
         with ZipFile(archive) as bundle:
             self.assertIsNone(bundle.testzip())
         result = self.run_package()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Stale archive content: codex-lazier/references/policy.md", result.stderr)
+        self.assertIn("Stale archive content: lazier/references/policy.md", result.stderr)
 
     def test_detached_artifact_closure_identity_license_crc_and_staleness(self):
         result = self.run_package("--build")
@@ -302,7 +273,7 @@ class ArtifactIntegrityTests(unittest.TestCase):
         archive = next((self.root / "dist").glob("*.zip"))
         before = archive.read_bytes()
         module = runpy.run_path(str(self.root / "tools/package.py"))
-        with TemporaryDirectory(prefix="web-offline-") as directory:
+        with TemporaryDirectory(prefix="agent-offline-") as directory:
             with ZipFile(archive) as bundle:
                 bundle.extractall(directory)
             installed = Path(directory)
@@ -313,15 +284,15 @@ class ArtifactIntegrityTests(unittest.TestCase):
             self.assertTrue(fixture_skills.is_relative_to(Path(self.temp.name).resolve()))
             shutil.rmtree(fixture_skills)
             module["validate_links"](files)
-            provenance = json.loads(files["codex-lazier/provenance.json"])
+            provenance = json.loads(files["lazier/provenance.json"])
             self.assertEqual(provenance["version"], module["VERSION"])
             self.assertEqual(set(provenance), {"name", "version", "sha256"})
-            self.assertEqual(provenance["name"], "codex-lazier")
-            self.assertEqual(set(provenance["sha256"]), set(files) - {"codex-lazier/provenance.json"})
+            self.assertEqual(provenance["name"], "lazier")
+            self.assertEqual(set(provenance["sha256"]), set(files) - {"lazier/provenance.json"})
             for name, digest in provenance["sha256"].items():
                 self.assertEqual(hashlib.sha256(files[name]).hexdigest(), digest)
             self.assertEqual(archive.with_suffix(".provenance.json").read_bytes(),
-                             files["codex-lazier/provenance.json"])
+                             files["lazier/provenance.json"])
         shutil.copytree(ROOT / "skills", self.root / "skills")
         self.assertEqual(self.run_package("--build").returncode, 0)
         self.assertEqual(archive.read_bytes(), before)
@@ -352,7 +323,7 @@ class ArtifactIntegrityTests(unittest.TestCase):
                             info.external_attr = 0o120777 << 16
                         bundle.writestr(info, content)
                     if mutation == "extra":
-                        bundle.writestr("codex-lazier/references/c2c/entrypoint.md", b"Stale receiver")
+                        bundle.writestr("lazier/references/obsolete.md", b"Obsolete guidance")
                     if mutation == "duplicate":
                         with self.assertWarns(UserWarning):
                             bundle.writestr(original[-1][0], original[-1][1])
@@ -383,23 +354,20 @@ class ArtifactIntegrityTests(unittest.TestCase):
                                         env=env, capture_output=True, text=True)
                 self.assertEqual(result.returncode, 0, result.stderr)
             self.assertFalse((root / ".git").exists())
-            self.assertFalse((root / "tools/c2c-source.json").exists())
             with ZipFile(next((root / "dist").glob("*.zip"))) as bundle:
-                self.assertEqual(len(bundle.namelist()), 7)
-                self.assertFalse(any("references/c2c/" in name for name in bundle.namelist()))
+                self.assertEqual(len(bundle.namelist()), 5)
 
     def test_ci_is_standalone_and_smoke_matrix_is_not_a_model_pass(self):
         ci = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
-        self.assertNotIn("c2c-source", ci)
-        self.assertNotIn("repository: hudrucan/codex-with-chatgpt", ci)
         self.assertIn('python3 tools/package.py --tag "$GITHUB_REF_NAME"', ci)
         self.assertIn("*.provenance.json", ci)
         matrix = json.loads((ROOT / "tools/smoke-cases.json").read_text(encoding="utf-8"))
         self.assertEqual(matrix["status"], "pending")
         cases = {case["id"]: case for case in matrix["cases"]}
         self.assertEqual(len(cases), len(matrix["cases"]))
-        self.assertTrue({"ordinary", "implicit", "simplicity", "plan", "manual", "auto", "auto-sender",
-                         "missing-c2c", "source-marker", "source-ticket", "auto-fallback"} <= set(cases))
+        self.assertTrue({"ordinary", "implicit", "simplicity", "plan", "english-artifacts",
+                         "project-destination", "tracked-destination", "canonical-docs",
+                         "continuation", "no-specialized-skill"} <= set(cases))
         self.assertTrue(all(case["prompt"] and case["observe"] for case in cases.values()))
 
 

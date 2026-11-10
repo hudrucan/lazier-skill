@@ -1,0 +1,7 @@
+interface:
+  display_name: "lazier"
+  short_description: "Simple engineering defaults for every coding task"
+  default_prompt: "Use $lazier to complete this engineering task with the smallest complete solution."
+
+policy:
+  allow_implicit_invocation: true

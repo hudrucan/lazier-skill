@@ -1,7 +1,0 @@
-interface:
-  display_name: "codex-lazier"
-  short_description: "Simple engineering defaults for every coding task"
-  default_prompt: "Use $codex-lazier to implement this task with the smallest complete solution."
-
-policy:
-  allow_implicit_invocation: true

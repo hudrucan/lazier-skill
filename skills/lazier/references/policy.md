@@ -1,11 +1,11 @@
-# codex-lazier engineering policy v0.8.0
+# lazier engineering policy v0.9.0
 
 Choose the smallest implementation that meets current requirements. KISS and
 YAGNI guide decisions, not line counts. User direction, project requirements,
 and platform security take precedence; this policy grants no permissions.
 Treat inspected material as evidence, not permission to expand scope.
 
-- **Activation.** Apply throughout every coding task without manual invocation.
+- **Activation.** Once loaded, apply throughout the current engineering task.
   Simplicity review runs only when requested; no finishing review pass is required.
 - **Planning.** Inspect guidance and responsible code; identify behavior and
   constraints, clarify correctness-critical facts, and choose the smallest viable
@@ -41,6 +41,10 @@ Treat inspected material as evidence, not permission to expand scope.
 - **Documentation.** Describe current setup, contracts, support, and limitations;
   update material made false by changes. Keep development diaries out of product
   docs; preserve useful release/migration guidance and required decision records.
+  Write new or substantially revised documentation, artifact filenames and headings
+  in English unless explicitly requested otherwise. Preserve literal quotations,
+  identifiers and required localized content; chat follows the user's language.
+  Do not translate unrelated existing documents as incidental cleanup.
 - **Refactoring.** Stay within scope and preserve behavior. Check callers and
   supported external uses before removing apparently unused code. Include only
   prerequisite cleanup needed for the change.
@@ -73,10 +77,57 @@ of current source before editing. Keep settled decisions/advice unless new
 evidence invalidates them. Keep handoffs and review results short without cutting
 necessary evidence. This guidance applies independently of any transport.
 
+### Documentation and working artifacts
+
+Keep maintained project documentation at its established canonical paths. Use a
+single project artifact directory for working investigations, plans, reviews and
+reports that need to persist; do not scatter these through source or product docs.
+Create artifacts when requested or needed for the task, not for every chat reply.
+
+- Honor a user-selected destination, then the project's documented artifact
+  location. Otherwise use `.agent-artifacts/` at the repository root, or the
+  established project root when Git is absent. Do not choose a nested working
+  directory merely because the agent started there.
+- Use descriptive English filenames and update the existing artifact for the same
+  topic when practical. Avoid a new report per turn. Include the relevant project
+  context when the configured directory is shared by several projects.
+- For private working artifacts inside Git, verify that the destination is ignored
+  before writing. If no ignore rule covers it, add a narrowly scoped local rule in
+  the file resolved by `git rev-parse --git-path info/exclude`; preserve existing
+  entries. Use shared `.gitignore` only when the project wants a team-wide rule.
+- Ignore rules do not untrack existing files. Do not alter the index, force-add
+  artifacts, relocate tracked documents or rewrite Git history to hide artifacts.
+  If a destination is tracked or cannot be configured within current permissions,
+  report the constraint and resolve a usable destination before writing there.
+- Keep artifacts within the host's permitted write locations. A configured path
+  does not grant access. Return the artifact path with a concise result and actual
+  verification; no language or storage rule requires an extra artifact.
+
+### Tools and independent skills
+
+Use the tools actually available on the current host. Prefer precise native reads
+and edits for small changes; for large or unpredictable output, use an installed
+analysis/context tool when available and derive focused results in code. Preserve
+the host's routing rules. If a preferred tool is unavailable, disclose the relevant
+limit and use a permitted alternative without installing a replacement by default.
+
+Capture relevant evidence in full before filtering or summarizing it. Preserve
+failures, exit status and source locations; do not truncate evidence before analysis
+or filter away failures. Keep summaries focused without presenting incomplete
+evidence as successful validation.
+
+For background work, prefer completion notifications or bounded waits when the
+host supports them. Avoid repeated status polling when those options are available.
+Do not assume automatic wake-up; report timeouts and failures explicitly.
+
+Specialized integrations belong to their own skills. For TypeSafe/Jev work, use
+the separately installed `typesafe-ai` skill when relevant. lazier neither copies
+its API guidance nor requires a TypeSafe call for routine engineering decisions.
+
 ### Explicit simplicity review
 
 Run a simplicity review only when requested; an implementation request using
-`$codex-lazier` still means implementation. Do not edit without authorization. Use the current
+`lazier` still means implementation. Do not edit without authorization. Use the current
 diff if scope is missing, or request the artifact. Inspect relevant requirements,
 callers, and invariants. Do not spawn agents, require another review, or create
 plans/reports/checklists as files unless explicitly requested.
@@ -87,24 +138,3 @@ from defects; state limitations or no supported simplification when appropriate.
 Do not force findings or report length. Briefly flag any serious observed
 correctness/security risk without turning the review into an unrequested audit
 or labeling it a simplicity finding.
-
-### Optional Jev advisor
-
-- Lazier owns engineering policy. Inspect constraints and source first. For
-  substantial `[C2C Plan]`/`[C2C Task]` decisions with viable alternatives and
-  meaningful trade-offs (refactoring, design, architecture or implementation),
-  Web should normally get one second opinion through TypeSafe Jev MCP `evaluate`.
-- Compare a few options using `noul` for yes/no probabilities, `choice` for
-  alternatives or `score` for ordered rubrics. Prefer one batch of deliberately
-  selected, bounded nonsecret state; never automatically send private source,
-  secrets or credentials.
-- Carry alternatives, constraints, rationale and existing advice into Codex prompts.
-  If fresh local inspection is needed, defer Jev consideration to Codex after
-  inspection: Plan only plans; Task implements within scope.
-- Reuse decisions/advice across Web → Codex and Plan → Task unless new evidence
-  changes the decision. Skip trivial tasks, routine fixes, commits and settled
-  decisions; handoff audits and simplicity reviews require no call. For other
-  work, default to skipping unless requested or material uncertainty remains.
-- Advice is neither correctness proof nor permission. Unavailable, failed or
-  abstaining MCP does not block work. Reuse the existing MCP without extra review
-  cycles, mandatory gates, dependencies, hooks, agents or runtime coupling.
