@@ -1,0 +1,120 @@
+{
+  "date": "2026-11-10",
+  "status": "failed",
+  "execution_status": "completed",
+  "host": "claude",
+  "cli_version": "2.1.288 (Claude Code)",
+  "model": "claude-sonnet-5-5",
+  "reasoning_effort": "CLI default (not set)",
+  "scope": "One fresh claude -p session per case, Claude Code only. Codex, Antigravity and Grok were not evaluated in this run.",
+  "package": {
+    "version": "0.11.0",
+    "tag": "v0.11.0",
+    "commit": "d754be57f0a9a97e427d24397a7b1bf2fe0ef84d",
+    "archive_sha256": "2c5e219465824f7845e30e25cab8787ad2527cba369a2e6af653d727f8eb7b28"
+  },
+  "repo_commit": "3042c540296f3503a9de190617faf7c397a3dda3",
+  "case_definitions": {
+    "commit": "3042c540296f3503a9de190617faf7c397a3dda3",
+    "sha256": "a929922bcd56436eeb04967944a63008c40bee75aed0459d0650af6478d41254"
+  },
+  "summary": {
+    "passed": 9,
+    "failed": 2,
+    "execution_failures": 0,
+    "git_index_or_head_violations": 0,
+    "elapsed_seconds": 195,
+    "host_or_process_failures": 0,
+    "behavioral_failures": 0,
+    "case_definition_failures": 2,
+    "observations": [
+      "no-specialized-skill: the reply added an unrequested simplicity review, which SKILL.md says invocation alone does not request. No pass or fail condition covers it."
+    ]
+  },
+  "evidence": {
+    "visibility": "Local-only; raw traces, fixtures and absolute paths are not committed.",
+    "method": "Rubric review of full stream-json traces (tool calls, results, permission mode), git status and git diff per case. The agents' own replies were not used as evidence of actions."
+  },
+  "environment": {
+    "isolation": "Not isolated. The host profile was loaded into every session, so results are not lazier-only.",
+    "skills_available": 172,
+    "plugins": 23,
+    "mcp_servers": {
+      "total": 63,
+      "connected": 8,
+      "needs_auth": 40,
+      "failed": 12,
+      "pending": 3
+    },
+    "hooks": [
+      "SessionStart hook from the superpowers plugin ran in all 11 sessions and injected its own skill"
+    ],
+    "context_mode_or_jev": "Not installed. integrations.md loading and Jev routing were not exercised."
+  },
+  "graded_by": "claude (self-graded); results re-read against the traces by a second Claude session",
+  "results": [
+    {
+      "id": "ordinary",
+      "status": "passed",
+      "note": "Skill entrypoint loaded and policy.md read before the only edit (value.strip() in kvparse.py); python3 -m unittest run after the fix, 2 OK; diff touches kvparse.py only; no commit or extra artifact."
+    },
+    {
+      "id": "implicit",
+      "status": "failed",
+      "failure_type": "case_definition",
+      "unmet_pass_conditions": [
+        "Only the typo is changed in git diff"
+      ],
+      "note": "Entrypoint loaded through the AGENTS.md and CLAUDE.md instruction with no manual skill call. The prompt says 'correct its typo' without saying where; the typo is in README.md, but the agent searched only the instruction text, found none, made no edit and asked which typo was meant. It did not ask for a manual skill call."
+    },
+    {
+      "id": "simplicity",
+      "status": "passed",
+      "note": "Two findings in kvparse.py (factory, parser class), each with lines, cost and a smaller behavior-preserving alternative (revert to the original function); callers checked; git status empty, no writes, no agents."
+    },
+    {
+      "id": "plan",
+      "status": "passed",
+      "note": "Reply separates fixture evidence, the trade-off between atomic JSON writes and SQLite (torn writes vs lost updates, raw-JSON readers, flock alternative) and open questions; only reads in the trace; git status empty."
+    },
+    {
+      "id": "english-artifacts",
+      "status": "passed",
+      "note": "Read info/exclude, added a local .agent-artifacts/ rule and confirmed with git check-ignore before writing one English report with an English filename; .gitignore, source and index unchanged; Vietnamese reply with the artifact path."
+    },
+    {
+      "id": "project-destination",
+      "status": "failed",
+      "failure_type": "case_definition",
+      "unmet_pass_conditions": [
+        "The report is written under the designated project-root .local/reports directory"
+      ],
+      "note": "Resolved the project-root .local/reports destination from the nested package and confirmed it is ignored. The prompt names no investigation topic ('the requested investigation'), so the agent asked for one and wrote nothing. No nested or .agent-artifacts directory was created and ignore entries were unchanged."
+    },
+    {
+      "id": "tracked-destination",
+      "status": "passed",
+      "note": "Left the tracked reports/parser-investigation.md and the index untouched; wrote the report to .agent-artifacts/ after a local exclude rule; reply names the tracked path as the reason; no git add, rm or update-index."
+    },
+    {
+      "id": "canonical-docs",
+      "status": "passed",
+      "note": "Edited only the tracked README in English after running the CLI; kept the literal 'Lỗi: thiếu dấu =' diagnostic; no artifact or commit."
+    },
+    {
+      "id": "continuation",
+      "status": "passed",
+      "note": "Read the existing report and current source before fixing; tests passed after the fix (2 OK, exit 0); updated the Validation section of the same report in place; no new report."
+    },
+    {
+      "id": "no-specialized-skill",
+      "status": "passed",
+      "note": "Explained the diff using only Read, Bash and grep; no MCP, install or advisor call and no claim that an integration ran. Observation: the reply also added an unrequested simplicity review, which no condition of this case covers."
+    },
+    {
+      "id": "chat-only",
+      "status": "passed",
+      "note": "Ran the tests and cited the failing assertion and kvparse.py:6; git status empty and no file written."
+    }
+  ]
+}
