@@ -1,180 +1,215 @@
-# lazier 0.10.0
+<div align="center">
 
-Portable engineering defaults for coding agents: focused implementation,
-proportionate validation, evidence-based review, English documentation and
-project-scoped working artifacts.
+<h1>lazier</h1>
 
-lazier is one [Agent Skill](https://agentskills.io/specification), with one
-[shared policy](skills/lazier/references/policy.md). It uses the current
-host's tools and permissions. There is no daemon, custom hook, advisor requirement,
-host adapter. Local discovery registration is handled separately by
-[the repository installer](tools/install.py); the model does not load installer rules.
+<p><strong>One engineering policy. Four coding agents.</strong></p>
 
-## Scope
+<p>Focused changes, useful tests, clear documentation.</p>
 
-Use lazier for coding, technical investigations, planning, reviews and project
-documentation. Simplicity review runs only when requested; ordinary implementation
-does not trigger a mandatory review pass. Questions unrelated to engineering do
-not need this skill.
+<p>
+  <a href="https://github.com/hudrucan/lazier-skill/actions/workflows/ci.yml"><img src="https://github.com/hudrucan/lazier-skill/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="https://github.com/hudrucan/lazier-skill/releases/latest"><img src="https://img.shields.io/github/v/release/hudrucan/lazier-skill?style=flat-square&amp;color=64748b" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-64748b?style=flat-square" alt="MIT license"></a>
+  <a href="#development"><img src="https://img.shields.io/badge/python-3.9%2B-64748b?style=flat-square" alt="Python 3.9 or newer"></a>
+</p>
 
-The policy guides judgment; it does not enforce behavior or guarantee correctness.
-User instructions, applicable project requirements and platform security retain
-precedence. A skill cannot grant filesystem, network or execution access.
+<p>
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#supported-agents">Supported agents</a> ·
+  <a href="#what-it-changes">What it changes</a> ·
+  <a href="#development">Development</a>
+</p>
 
-## Build and inspect the release
+</div>
 
-Python 3.9+ and its standard library are sufficient. No Git, network, other skill
-or installed agent is needed to build the distribution:
+**lazier** is a portable [Agent Skill](https://agentskills.io/specification) for
+coding, technical investigations, planning, reviews and project documentation.
+It gives your agents the same engineering defaults while keeping their native
+tools, permissions and workflows.
+
+The skill is plain files: one entrypoint and one shared policy. Agent discovery
+is handled by a separate installer in this repository.
+
+## Quick start
+
+Requires **Python 3.9+** and its standard library. Choose only the agents you use.
 
 ```sh
-python3 -m unittest discover -s tools -p 'test_*.py'
+git clone https://github.com/hudrucan/lazier-skill.git
+cd lazier-skill
+
+# Preview the installation without writing files.
+python3 tools/install.py --target codex claude agy grok --dry-run
+
+# Install the same skill payload for the selected agents.
+python3 tools/install.py --target codex claude agy grok
+```
+
+For a single agent, use `--target claude`, for example. Open a fresh agent session
+and confirm that `lazier` appears in its skill list or native invocation interface.
+
+> The installer registers files at documented discovery paths. Seeing a skill in
+> the filesystem is separate from confirming that an agent loaded it.
+
+## Supported agents
+
+| Agent | Target | Installation path | Use or inspect |
+| --- | --- | --- | --- |
+| Codex | `codex` | `~/.agents/skills/lazier/` | `$lazier` |
+| Claude Code | `claude` | `~/.claude/skills/lazier/` | `/lazier` |
+| Antigravity | `agy` | `~/.gemini/config/skills/lazier/` | Native skill selection; `/skills` in the CLI |
+| Grok Build | `grok` | `~/.agents/skills/lazier/` | `/lazier` |
+
+**One payload, three destinations.** Codex and Grok share the user-level
+`.agents/skills` location through Grok Build's compatibility discovery. Claude
+and Antigravity receive byte-identical copies at their native locations. There
+are no agent-specific policy variants or model-loaded host adapters.
+
+Discovery references: [Codex](https://developers.openai.com/codex/skills) ·
+[Claude Code](https://code.claude.com/docs/en/skills) ·
+[Antigravity](https://antigravity.google/docs/skills) ·
+[Grok Build](https://docs.x.ai/build/features/skills-plugins-marketplaces).
+
+### Persistent use
+
+Skills can be selected automatically when relevant. To apply lazier consistently
+to engineering work, add a short instruction to the agent's user or project
+instructions to read the installed `SKILL.md`, using its actual absolute path.
+Preserve existing guidance and follow the host's instruction precedence.
+
+This repository's [AGENTS.md](AGENTS.md) shows a project bootstrap. The installer
+does not edit global instructions, settings, hooks or permission controls.
+
+## What it changes
+
+| Default | What it means in practice |
+| --- | --- |
+| **Focused implementation** | Choose the smallest complete solution that satisfies current requirements. |
+| **Preserved behavior** | Protect contracts, boundaries and failure handling when simplifying code. |
+| **Proportionate validation** | Test observable behavior and reuse checks that remain valid. |
+| **Evidence-based review** | Connect findings to locations, impact and a practical fix. |
+| **Explicit simplicity review** | Review for unnecessary complexity when asked, without adding a mandatory finishing pass. |
+| **Technical continuity** | Carry useful decisions and evidence forward; inspect current source before editing. |
+| **Organized documentation** | Write English docs and keep working artifacts together per project. |
+
+The complete behavior lives in the [shared policy](skills/lazier/references/policy.md).
+User instructions, project requirements and host security rules retain precedence.
+lazier provides guidance; it does not grant access or enforce correctness.
+
+### Example requests
+
+Use your agent's native skill invocation, then ask for the work:
+
+```text
+Fix this parser regression with the smallest complete change.
+Run the relevant existing tests and report what you verified.
+```
+
+```text
+Investigate why this test fails and save a report.
+Do not change the implementation yet.
+```
+
+```text
+Review this diff for unnecessary complexity.
+Report supported simplifications; do not edit.
+```
+
+Installing or invoking lazier does not request a simplicity review on its own.
+Task-specific skills, including TypeSafe/Jev guidance, remain independent.
+
+## Documentation and artifacts
+
+**Docs in English; conversation in your language.** New or substantially revised
+documents, artifact filenames and headings use English unless you request another
+language. Literal quotations, identifiers and required localized content are preserved.
+
+Maintained project documentation stays at its canonical path. Working investigations,
+plans, reviews and reports use one destination, in this order:
+
+1. The location you explicitly request.
+2. The project's documented artifact directory.
+3. `<project-root>/.agent-artifacts/`.
+
+Private artifacts inside Git must be untracked and ignored before writing. When
+needed, use a narrow local rule in the file resolved by
+`git rev-parse --git-path info/exclude`. Ignore rules do not untrack existing files.
+
+Reuse the report for the same topic when practical. A short chat answer does not
+need an artifact, and the policy does not authorize moving old docs or changing
+the Git index to hide them.
+
+## Updates and installation behavior
+
+Update the checkout, preview the selected targets, then install:
+
+```sh
+git pull --ff-only
+python3 tools/install.py --target codex claude agy grok --dry-run
+python3 tools/install.py --target codex claude agy grok
+```
+
+The installer checks all selected destinations before making changes. Identical
+installations are left untouched; provenance-verified installations without local
+edits can be updated. Locally modified, unmanaged or additional files are preserved
+by refusing the update rather than overwriting them.
+
+<details>
+<summary><strong>Installation details</strong></summary>
+
+- The installer uses directory copies and does not depend on Antigravity symlink discovery.
+- Existing linked skill destinations are preserved. Update their canonical location instead.
+- `--home <directory>` supports isolated testing and an explicit alternate home.
+- Only default user discovery roots are mapped. Custom configuration roots and existing workspace or plugin copies need separate inspection.
+- Each directory replacement rolls back if publishing that candidate fails. Several target directories are not one transaction.
+- No persistent backup is created. Keep custom policy changes in your source branch rather than editing installed copies.
+
+</details>
+
+## Development
+
+Build and verify locally using only Python's standard library:
+
+```sh
+# Runs packaging and installer tests, matching the CI entrypoint.
+python3 tools/test_package.py
+
+# Build the skill archive, checksum and provenance.
 python3 tools/package.py --build
+
+# Verify the generated assets against source.
 python3 tools/package.py
 git diff --check
 ```
 
-The ignored `dist/` directory contains `lazier-0.10.0.zip`, its SHA-256 file
-and provenance sidecar. Each ZIP contains exactly five files: the entrypoint,
-OpenAI UI metadata, shared policy, LICENSE and provenance. All local links resolve
-inside the extracted package. Packaging tests check archive identity, permissions,
-path containment, symlinks, CRCs, checksums, stale bytes and reproducibility.
+Generated files go into ignored `dist/`:
 
-The [CI workflow](.github/workflows/ci.yml) uses read-only checkout credentials,
-checks the package and publishes only from a version-matching tag. Source and
-release assets are available at [lazier-skill](https://github.com/hudrucan/lazier-skill).
-The 0.10.0 release adds local installation tooling outside the skill payload.
-Building the package does not install it; the published 0.9.0 assets remain unchanged.
+| Asset | Purpose |
+| --- | --- |
+| `lazier-<version>.zip` | The portable skill package. |
+| `lazier-<version>.sha256` | SHA-256 checksum for the archive. |
+| `lazier-<version>.provenance.json` | Version and hashes of the packaged source files. |
 
-## Use one source across agents
+The ZIP contains five files: `SKILL.md`, `references/policy.md`,
+`agents/openai.yaml`, `LICENSE` and `provenance.json`. The installer stays in
+`tools/`, outside the skill payload. OpenAI UI metadata does not configure other agents.
 
-Keep the complete skill directory together at a user-controlled location. Register
-that directory using each agent's supported discovery mechanism; where directory
-links are supported, several agents can use the same source. Do not maintain
-independently edited policy copies or leave duplicate skill installations active.
+The [CI workflow](.github/workflows/ci.yml) tests the project, checks reproducible
+builds and validates release assets. Version-matching tags publish the ZIP,
+checksum and provenance to [GitHub Releases](https://github.com/hudrucan/lazier-skill/releases).
 
-The installer supports exactly four local targets:
+### Verification scope
 
-| Target | Installer destination | Invocation / discovery |
-| --- | --- | --- |
-| `codex` | `~/.agents/skills/lazier/` | `$lazier` or automatic selection |
-| `claude` | `~/.claude/skills/lazier/` | `/lazier` or automatic selection |
-| `agy` | `~/.gemini/config/skills/lazier/` | Native skill selection; inspect CLI discovery with `/skills` |
-| `grok` | `~/.agents/skills/lazier/` through Grok Build compatibility discovery | `/lazier` or automatic selection |
+Automated checks cover package integrity, links, path containment, stale content,
+dry-run, idempotence and preservation of existing installations. Installer tests
+use temporary homes. The installer has also been exercised against the maintainer's
+local installation, including a second run reporting `unchanged`.
 
-See the official [Codex skills](https://developers.openai.com/codex/skills) and
-[Claude skills](https://code.claude.com/docs/en/skills),
-[Antigravity skills](https://antigravity.google/docs/skills) and
-[Grok Build skills](https://docs.x.ai/build/features/skills-plugins-marketplaces) documentation. The common
-`SKILL.md` and references define behavior. `agents/openai.yaml` supplies optional
-OpenAI UI and invocation metadata; it is not a cross-agent configuration file.
-Host discovery and behavioral compatibility still need fresh-session verification.
-
-Preview registration from this checkout without writing any files:
-
-```sh
-python3 tools/install.py --target codex claude agy grok --dry-run
-```
-
-When installation is requested, run the same command without `--dry-run`. The
-installer validates the source package and exports identical files to each selected
-native directory. Codex and Grok share one destination, so they are installed once.
-These are managed copies of one payload, not host-specific skills or policies.
-
-The installer preflights all selected destinations before writing. It updates an
-unchanged, provenance-verified lazier installation and leaves identical copies
-untouched. It refuses locally modified, unmanaged or additional files, linked skill
-destinations and parent paths that resolve outside the selected home. Existing links
-are preserved: update their canonical installation separately rather than replacing
-the link. No persistent backup is created. A per-directory replacement rolls back
-if publishing that candidate fails; applying several destinations is not one transaction.
-
-The installer deliberately uses directory copies so it does not depend on AGY symlink
-discovery. `--home <directory>` supports isolated fixture testing. Only default user
-discovery roots are mapped; custom configuration roots, workspace/plugin skills and
-duplicate registrations there need host-specific inspection. The installer does not
-edit settings, global instructions, hooks or permissions and does not start agents.
-
-For persistent application, add a short instruction to each host's user or project
-instructions: read and apply the installed lazier entrypoint for engineering
-tasks. Use its actual absolute path and preserve existing instructions. A skill
-description makes lazier discoverable; it does not guarantee activation on every
-task. This repository's [AGENTS.md](AGENTS.md) demonstrates a project bootstrap.
-
-## Documentation and artifacts
-
-New or substantially revised documents, artifact filenames and headings are in
-English unless the user explicitly chooses another language. Chat can remain in
-the user's language. Preserve quotations, identifiers and localized content.
-
-Maintained documentation stays at its canonical repository path. Working plans,
-investigations, reviews and reports use one artifact directory per project:
-
-1. Follow an explicit user destination.
-2. Otherwise follow the project's documented artifact destination.
-3. Otherwise use `<project-root>/.agent-artifacts/`.
-
-Before writing private working artifacts inside Git, verify that the destination
-is untracked and ignored. If necessary, preserve existing entries and add a narrow
-local rule in `git rev-parse --git-path info/exclude`; a shared `.gitignore` change
-is for an intentional team convention. Ignore rules do not untrack files. lazier
-does not authorize index changes, migration of old reports or forced staging.
-
-An external destination must be writable under the current host's permissions.
-Reuse an existing artifact for the same topic when practical. A short answer does
-not need a report file merely because this policy exists.
-
-These preferences live in the lazier source you control, not in context-mode's
-package or generated templates. Updating context-mode does not update this policy.
-Updating lazier itself replaces its distribution: maintain custom changes in your
-own source branch rather than patching the extracted installation. Keep per-project
-destination overrides in project or user instructions so skill updates preserve them.
-
-## Independent skills and tools
-
-Use installed task-specific skills when relevant. TypeSafe/Jev integration belongs
-to the separately installed `typesafe-ai` skill. lazier carries no API schemas,
-probability thresholds or automatic second-opinion workflow.
-
-Context and analysis tools remain independently configured. Use the tools exposed
-by the current host and follow its routing rules; do not pin a plugin fork, install
-another MCP server or change hooks just to use lazier.
-
-## Migration from 0.9.0
-
-The skill name and common policy remain the same. The 0.10.0 release adds repository
-installation tooling outside the five-file skill payload. Preview the selected
-targets, then explicitly install when a rollout is requested. Verify actual discovery
-in each host; copying files and packaging success do not prove model activation.
-
-## Migration from codex-lazier 0.8.0
-
-This is a breaking skill rename to `lazier`; invocation names and installation
-paths change. Keep a verified old package for rollback. When a cutover is authorized:
-
-- Replace the old skill installation with the complete new directory, avoiding
-  stale files and duplicate discovery roots.
-- Update existing bootstrap paths from `references/codex.md` or `references/web.md`
-  to the new `SKILL.md`. Update explicit invocation names as appropriate for the host.
-- Remove only obsolete lazier-specific bootstrap text; preserve unrelated settings.
-- Start fresh sessions and verify loaded paths, ordinary implementation, explicit
-  review and artifact routing before calling the installation ready.
-
-The Codex/Web adapters, C2C workflow and built-in Jev advice are removed. Existing
-independent skills and tools are not reconfigured. No compatibility alias is bundled;
-silently retaining two separately selectable policies would obscure which one ran.
-
-## Behavioral verification
-
-[Smoke cases](tools/smoke-cases.json) cover ordinary work, implicit activation,
-planning, explicit review, continuity, English artifacts, project overrides,
-tracked destinations and canonical docs. Run them in disposable fixtures on each
-host actually in use. Record package hash, host/model, loaded paths and observed
-file and Git changes. The matrix is pending: archive validation is not a model pass,
-and package validation makes no claim of live multi-agent verification. Installer
-tests use temporary homes and verify native paths, byte-identical payloads, dry-run,
-idempotence and preservation of existing content; they do not launch any agent.
+Native agent discovery and behavioral verification remain separate. The
+[smoke matrix](tools/smoke-cases.json) is pending; passing packaging tests does not
+establish activation or equivalent behavior across all agents.
 
 ## License
 
-[MIT](LICENSE). [Research notes](RESEARCH.md) record engineering provenance and
-the boundaries of the portability claim.
+[MIT](LICENSE). See [research and provenance](RESEARCH.md) for the sources behind
+the engineering policy.
