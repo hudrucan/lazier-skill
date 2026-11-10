@@ -6,8 +6,14 @@ license: MIT
 
 # lazier
 
-Read and apply the [shared policy](references/policy.md). It covers engineering
-judgment, technical continuity, English documentation and project artifact storage.
+Read and apply the [core policy](references/policy.md): engineering judgment,
+validation, review and handoff. Load the other references only when their trigger
+applies:
+
+- [artifacts and continuity](references/artifacts.md): a plan, investigation,
+  review or report must persist, or work continues across sessions or review rounds.
+- [tools and integrations](references/integrations.md): output is large or
+  unpredictable, work runs in the background, or a specialized skill is relevant.
 
 Reuse guidance already read and still valid in this session; reread changed
 guidance or after missing/uncertain context. Guidance reuse never replaces fresh

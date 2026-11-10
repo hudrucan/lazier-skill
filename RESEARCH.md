@@ -67,6 +67,6 @@ source branch and project artifact destinations in persistent user/project guida
 Skill installation, host configuration and migration of old artifacts remain
 separate from the package build.
 
-Packaging is offline and reproducible, with a five-member distribution and hashes
-for the four source inputs. The smoke matrix remains pending. Structural tests do
+Packaging is offline and reproducible, with a seven-member distribution and hashes
+for the six source inputs. The smoke matrix remains pending. Structural tests do
 not establish fresh-session activation or identical behavior on every vendor.

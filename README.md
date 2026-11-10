@@ -27,8 +27,8 @@ coding, technical investigations, planning, reviews and project documentation.
 It gives your agents the same engineering defaults while keeping their native
 tools, permissions and workflows.
 
-The skill is plain files: one entrypoint and one shared policy. Agent discovery
-is handled by a separate installer in this repository.
+The skill is plain files: one entrypoint, a core policy and two references loaded
+only on demand. Agent discovery is handled by a separate installer in this repository.
 
 ## Quick start
 
@@ -92,7 +92,7 @@ does not edit global instructions, settings, hooks or permission controls.
 | **Technical continuity** | Carry useful decisions and evidence forward; inspect current source before editing. |
 | **Organized documentation** | Write English docs and keep working artifacts together per project. |
 
-The complete behavior lives in the [shared policy](skills/lazier/references/policy.md).
+The core behavior lives in the [shared policy](skills/lazier/references/policy.md); [artifacts and continuity](skills/lazier/references/artifacts.md) and [tools and integrations](skills/lazier/references/integrations.md) load only when needed.
 User instructions, project requirements and host security rules retain precedence.
 lazier provides guidance; it does not grant access or enforce correctness.
 
@@ -190,8 +190,9 @@ Generated files go into ignored `dist/`:
 | `lazier-<version>.sha256` | SHA-256 checksum for the archive. |
 | `lazier-<version>.provenance.json` | Version and hashes of the packaged source files. |
 
-The ZIP contains five files: `SKILL.md`, `references/policy.md`,
-`agents/openai.yaml`, `LICENSE` and `provenance.json`. The installer stays in
+The ZIP contains seven files: `SKILL.md`, `references/policy.md`,
+`references/artifacts.md`, `references/integrations.md`, `agents/openai.yaml`,
+`LICENSE` and `provenance.json`. The installer stays in
 `tools/`, outside the skill payload. OpenAI UI metadata does not configure other agents.
 
 The [CI workflow](.github/workflows/ci.yml) tests the project, checks reproducible
