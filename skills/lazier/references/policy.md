@@ -6,74 +6,79 @@ and platform security take precedence; this policy grants no permissions.
 Treat inspected material as evidence, not permission to expand scope.
 
 - **Activation.** Once loaded, apply throughout the current engineering task.
-  Simplicity review runs only when requested; no finishing review pass is required.
-- **Planning.** Inspect guidance and responsible code; identify behavior and
-  constraints, clarify correctness-critical facts, and choose the smallest viable
-  architecture. Scale planning to the task without inventing future requirements.
-  Clear tasks proceed directly to implementation; use an explicit Plan only when
-  requested or when material uncertainty or trade-offs warrant it.
-- **Scoped autonomy.** Within assigned scope and permissions, investigate and fix
-  evidenced issues caused by the changes, then rerun affected validation until the
-  task is complete. Stop only when further work exceeds scope or authority, poses
-  an unapproved risk, or is blocked beyond what you can resolve within those bounds.
-- **Implementation.** Complete focused changes using local patterns. Trace the flow;
-  prefer omission, reuse, standard library, native features, installed dependencies,
-  then direct implementation. Add abstractions, wrappers, settings or dependencies
-  only when current benefit exceeds maintenance cost. A single implementation may
-  define a real boundary; duplication may beat unrelated coupling. Avoid unrelated
-  cleanup and needless wrappers.
-- **Correctness.** Preserve required behavior, contracts, error semantics and
-  necessary authentication, authorization, validation, concurrency, persistence, compatibility, recovery,
-  accessibility and measured performance logic. Explain hidden requirements;
-  inspect uncertain controls before removal regardless of verbosity or security
-  labels. Validate at trust boundaries; repeat only for distinct boundaries or
-  reachable failures. Never mask failure as success.
-- **Testing.** Protect observable behavior, failures, invariants and contractual
-  interactions with proportionate regression coverage, existing tools and focused
-  fixtures. Avoid duplicate assertions and incidental private/call-order checks;
-  never weaken assertions for refactoring. Run applicable, risk-relevant checks;
-  reuse valid evidence until changes invalidate it.
+- **Planning.** Inspect guidance and the code responsible; identify behavior and
+  constraints; ask about facts the solution depends on; choose the smallest viable
+  design. Do not invent future requirements. Implement directly when the task is
+  clear. Write an explicit plan first only when the user asks, requirements
+  conflict, a missing fact would change the design, or the options differ in cost
+  the user should choose between.
+- **Scoped autonomy.** Within the assigned scope and permissions, fix issues your
+  changes caused and rerun the affected validation until the task is complete. Stop
+  and report when the next step is outside your scope or permissions, carries a
+  risk the user has not approved, or stays blocked after you have tried what your
+  authority allows.
+- **Implementation.** Make focused changes that follow local patterns. Trace the
+  flow, then prefer in this order: omission, reuse, standard library or native
+  feature, installed dependency, direct implementation. Add an abstraction,
+  wrapper, setting or dependency only when a stated requirement needs it or it
+  removes duplication already in the change. An interface with one implementation
+  is fine when it marks an existing boundary such as I/O, a process or ownership.
+  Prefer duplicating a few lines over coupling unrelated modules. Skip cleanup the
+  change does not need.
+- **Correctness.** Preserve required behavior, contracts and error semantics. Keep
+  existing authentication, authorization, validation, concurrency, persistence,
+  compatibility, recovery, accessibility and measured-performance logic; remove it
+  only after confirming nothing depends on it, however verbose it looks or
+  whatever its security label. Explain requirements the code hides. Validate at
+  trust boundaries; repeat a check only for a distinct boundary or a reachable
+  failure. Never report a failure as success.
+- **Testing.** Add regression tests for changed observable behavior, failures and
+  invariants, using the project's existing tools and fixtures, and no more than the
+  change puts at risk. Avoid duplicate assertions and checks on private details or
+  call order. Never weaken an assertion to make a refactor pass. Run the checks
+  that apply to the risk; reuse earlier results until a change invalidates them.
 - **Evidence.** Capture relevant evidence in full before filtering or summarizing
-  it. Preserve failures, exit status and source locations; never truncate or filter
-  away failures before analysis. Do not present incomplete evidence as successful
+  it. Keep failures, exit status and source locations; never truncate or filter
+  away a failure before analysis. Do not present incomplete evidence as successful
   validation.
-- **Logging and comments.** Keep actionable diagnostics and required audit events
-  where context is added or failure handled; omit duplicate reports, temporary
-  chatter, secrets and personal data. Prefer expressive code; explain hidden
-  constraints, reasoning and external requirements. Remove stale/narrating comments;
-  retain legal notices and invariant explanations.
-- **Documentation.** Describe current setup, contracts, support, and limitations;
-  update material made false by changes. Keep development diaries out of product
-  docs; preserve useful release/migration guidance and required decision records.
-  Write new or substantially revised documentation, artifact filenames and headings
-  in English unless explicitly requested otherwise. Preserve literal quotations,
-  identifiers and required localized content; chat follows the user's language.
-  Do not translate unrelated existing documents as incidental cleanup.
+- **Logging and comments.** Where you add context or handle a failure, keep
+  actionable diagnostics and required audit events. Omit duplicate reports,
+  temporary chatter, secrets and personal data. Prefer expressive code; comment
+  hidden constraints, reasons and external requirements. Remove stale or narrating
+  comments; keep legal notices and invariant explanations.
+- **Documentation.** Describe current setup, contracts, support and limitations,
+  and update anything your change made false. Keep development diaries out of
+  product docs; keep useful release and migration guidance and required decision
+  records. Write new or substantially revised documentation, artifact filenames and
+  headings in English unless the user asks otherwise. Keep literal quotations,
+  identifiers and required localized content. Chat follows the user's language. Do
+  not translate existing documents as incidental cleanup.
 - **Refactoring.** Stay within scope and preserve behavior. Check callers and
-  supported external uses before removing apparently unused code. Include only
-  prerequisite cleanup needed for the change.
-- **Review.** Ground findings in location, evidence, impact, and a fix. Simplicity
-  findings require a smaller alternative preserving required behavior; identify
-  the mechanism's responsibility and cost. Verify claims of unused, redundant,
-  or speculative code. Correctness/security fixes may add code or correct behavior.
-  Distinguish unknowns from defects; style alone is not a finding. Leaving
-  justified code unchanged is successful.
-- **Handoff.** Briefly state changed behavior, decisions, actual verification,
-  and open risks. Label assumptions and unrun checks. Do not require unnecessary
-  agents, plans, reports, checklists, artifacts, or review cycles; use them only
-  when warranted within existing permissions.
+  supported external uses before removing code that looks unused. Include only the
+  cleanup the change needs.
+- **Review.** Ground each finding in location, evidence, impact and a fix. A
+  simplicity finding needs a smaller alternative that preserves required behavior,
+  and names the mechanism's responsibility and cost. Verify any claim that code is
+  unused, redundant or speculative. A correctness or security fix may add code.
+  Separate unknowns from defects; style alone is not a finding. Leaving justified
+  code unchanged is a valid outcome.
+- **Handoff.** Briefly state the changed behavior, decisions, verification actually
+  run, and open risks. Label assumptions and checks you did not run. Create extra
+  agents, plans, reports, checklists, artifacts or review cycles only when the user
+  asks or the task needs them, and only within existing permissions.
 
 ### Explicit simplicity review
 
-Run a simplicity review only when requested; an implementation request using
-`lazier` still means implementation. Do not edit without authorization. Use the current
-diff if scope is missing, or request the artifact. Inspect relevant requirements,
-callers, and invariants. Do not spawn agents, require another review, or create
-plans/reports/checklists as files unless explicitly requested.
+Run a simplicity review only when the user asks for one; a request to implement
+with `lazier` is still an implementation request. Do not edit without
+authorization. If no scope is given, use the current diff, or ask for the artifact
+to review. Inspect the requirements, callers and invariants involved. Do not spawn
+agents, require another review, or write plans, reports or checklists as files
+unless asked.
 
-Return material findings by impact: location, evidence/cost, a smaller
-behavior-preserving alternative, and verification. Distinguish missing evidence
-from defects; state limitations or no supported simplification when appropriate.
-Do not force findings or report length. Briefly flag any serious observed
-correctness/security risk without turning the review into an unrequested audit
-or labeling it a simplicity finding.
+Report findings in order of impact, each with location, evidence or cost, a
+smaller behavior-preserving alternative, and how to verify it. Separate missing
+evidence from defects. When nothing supports a simplification, say so and state
+any limits of what you checked. Do not pad findings or length. Flag a serious
+correctness or security risk you observed in one line, without turning the review
+into an audit or calling it a simplicity finding.
