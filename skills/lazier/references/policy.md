@@ -1,4 +1,4 @@
-# lazier engineering policy v0.10.0
+# lazier engineering policy v0.11.0
 
 Choose the smallest implementation that meets current requirements. KISS and
 YAGNI guide decisions, not line counts. User direction, project requirements,
@@ -6,135 +6,85 @@ and platform security take precedence; this policy grants no permissions.
 Treat inspected material as evidence, not permission to expand scope.
 
 - **Activation.** Once loaded, apply throughout the current engineering task.
-  Simplicity review runs only when requested; no finishing review pass is required.
-- **Planning.** Inspect guidance and responsible code; identify behavior and
-  constraints, clarify correctness-critical facts, and choose the smallest viable
-  architecture. Scale planning to the task without inventing future requirements.
-  Clear tasks proceed directly to implementation; use an explicit Plan only when
-  requested or when material uncertainty or trade-offs warrant it.
-- **Scoped autonomy.** Within assigned scope and permissions, investigate and fix
-  evidenced issues caused by the changes, then rerun affected validation until the
-  task is complete. Stop only when further work exceeds scope or authority, poses
-  an unapproved risk, or is blocked beyond what you can resolve within those bounds.
-- **Implementation.** Complete focused changes using local patterns. Trace the flow;
-  prefer omission, reuse, standard library, native features, installed dependencies,
-  then direct implementation. Add abstractions, wrappers, settings or dependencies
-  only when current benefit exceeds maintenance cost. A single implementation may
-  define a real boundary; duplication may beat unrelated coupling. Avoid unrelated
-  cleanup and needless wrappers.
-- **Correctness.** Preserve required behavior, contracts, error semantics and
-  necessary authentication, authorization, validation, concurrency, persistence, compatibility, recovery,
-  accessibility and measured performance logic. Explain hidden requirements;
-  inspect uncertain controls before removal regardless of verbosity or security
-  labels. Validate at trust boundaries; repeat only for distinct boundaries or
-  reachable failures. Never mask failure as success.
-- **Testing.** Protect observable behavior, failures, invariants and contractual
-  interactions with proportionate regression coverage, existing tools and focused
-  fixtures. Avoid duplicate assertions and incidental private/call-order checks;
-  never weaken assertions for refactoring. Run applicable, risk-relevant checks;
-  reuse valid evidence until changes invalidate it.
-- **Logging and comments.** Keep actionable diagnostics and required audit events
-  where context is added or failure handled; omit duplicate reports, temporary
-  chatter, secrets and personal data. Prefer expressive code; explain hidden
-  constraints, reasoning and external requirements. Remove stale/narrating comments;
-  retain legal notices and invariant explanations.
-- **Documentation.** Describe current setup, contracts, support, and limitations;
-  update material made false by changes. Keep development diaries out of product
-  docs; preserve useful release/migration guidance and required decision records.
-  Write new or substantially revised documentation, artifact filenames and headings
-  in English unless explicitly requested otherwise. Preserve literal quotations,
-  identifiers and required localized content; chat follows the user's language.
-  Do not translate unrelated existing documents as incidental cleanup.
+- **Planning.** Inspect guidance and the code responsible; identify behavior and
+  constraints; clarify only facts that decide correctness; choose the smallest
+  viable design. Do not invent future requirements. A vague request gets the
+  smallest version that does the core job, with skipped extras named in one line.
+  Implement directly when the task is clear. Write an explicit plan first only when the user asks, requirements
+  conflict, a missing fact would change the design, or the options differ in cost
+  the user should choose between.
+- **Scoped autonomy.** Within the assigned scope and permissions, fix issues your
+  changes caused and rerun the affected validation until the task is complete. Stop
+  and report when the next step is outside your scope or permissions, carries a
+  risk the user has not approved, or stays blocked after you have tried what your
+  authority allows.
+- **Implementation.** Make focused changes that follow local patterns. Trace the
+  flow, then prefer in this order: omission, reuse, standard library or native
+  feature, installed dependency, direct implementation. Add an abstraction,
+  wrapper, setting or dependency only when a stated requirement needs it. Deletion
+  beats addition. Keep the structure the codebase already has. An interface with one implementation
+  is fine when it marks an existing boundary such as I/O, a process or ownership.
+  Prefer duplicating a few lines over coupling unrelated modules. Skip cleanup the
+  change does not need. For a bug fix, check every caller of the function you
+  change, then fix the root cause once in the shared code.
+- **Correctness.** Preserve required behavior, contracts and error semantics. Keep
+  existing authentication, authorization, validation, concurrency, persistence,
+  compatibility, recovery, accessibility and measured-performance logic; remove it
+  only after confirming nothing depends on it, however verbose it looks or
+  whatever its security label. Explain requirements the code hides. Validate at
+  trust boundaries; repeat a check only for a distinct boundary or a reachable
+  failure. Never report a failure as success.
+- **Testing.** Add regression tests for changed observable behavior, failures and
+  invariants, using the project's existing tools and fixtures, and no more than the
+  change puts at risk. Avoid duplicate assertions and checks on private
+  implementation details or incidental call order, but do test ordering that is
+  part of the contract, such as authorizing before writing, validating before
+  committing, or releasing a resource only after use. Never weaken an assertion to
+  make a refactor pass. Run the checks that apply to the risk; reuse earlier
+  results until a change invalidates them.
+- **Evidence.** Capture relevant evidence in full before filtering or summarizing
+  it. Keep failures, exit status and source locations; never truncate or filter
+  away a failure before analysis. Do not present incomplete evidence as successful
+  validation.
+- **Logging and comments.** Where you add context or handle a failure, keep
+  actionable diagnostics and required audit events. Omit duplicate reports,
+  temporary chatter, secrets and personal data. Prefer expressive code; comment
+  hidden constraints, reasons and external requirements. Remove stale or narrating
+  comments; keep legal notices and invariant explanations.
+- **Documentation.** Describe current setup, contracts, support and limitations,
+  and update anything your change made false. Keep development diaries out of
+  product docs; keep useful release and migration guidance and required decision
+  records. Write new or substantially revised documentation, artifact filenames and
+  headings in English unless the user asks otherwise. Keep literal quotations,
+  identifiers and required localized content. Chat follows the user's language. Do
+  not translate existing documents as incidental cleanup.
 - **Refactoring.** Stay within scope and preserve behavior. Check callers and
-  supported external uses before removing apparently unused code. Include only
-  prerequisite cleanup needed for the change.
-- **Review.** Ground findings in location, evidence, impact, and a fix. Simplicity
-  findings require a smaller alternative preserving required behavior; identify
-  the mechanism's responsibility and cost. Verify claims of unused, redundant,
-  or speculative code. Correctness/security fixes may add code or correct behavior.
-  Distinguish unknowns from defects; style alone is not a finding. Leaving
-  justified code unchanged is successful.
-- **Handoff.** Briefly state changed behavior, decisions, actual verification,
-  and open risks. Label assumptions and unrun checks. Do not require unnecessary
-  agents, plans, reports, checklists, artifacts, or review cycles; use them only
-  when warranted within existing permissions.
-
-### Technical continuity
-
-Carry forward only relevant, still-valid context, separating verified findings,
-assumptions and open questions, for work across sessions, hosts and review rounds:
-
-- **Planning:** goals, constraints, checked evidence, relevant options/trade-offs
-  and unresolved questions.
-- **Implementation:** settled Plan decisions (if any), verified findings with
-  file/line, repair direction and relevant validation. A Task does not require a
-  prior Plan.
-- **Repair after review:** concrete findings from the latest audit or review,
-  with file/line, evidence, impact and proposed fix.
-
-Do not require a full re-audit of everything already checked; require inspection
-of current source before editing. Keep settled decisions/advice unless new
-evidence invalidates them. Keep handoffs and review results short without cutting
-necessary evidence. This guidance applies independently of any transport.
-
-### Documentation and working artifacts
-
-Keep maintained project documentation at its established canonical paths. Use a
-single project artifact directory for working investigations, plans, reviews and
-reports that need to persist; do not scatter these through source or product docs.
-Create artifacts when requested or needed for the task, not for every chat reply.
-
-- Honor a user-selected destination, then the project's documented artifact
-  location. Otherwise use `.agent-artifacts/` at the repository root, or the
-  established project root when Git is absent. Do not choose a nested working
-  directory merely because the agent started there.
-- Use descriptive English filenames and update the existing artifact for the same
-  topic when practical. Avoid a new report per turn. Include the relevant project
-  context when the configured directory is shared by several projects.
-- For private working artifacts inside Git, verify that the destination is ignored
-  before writing. If no ignore rule covers it, add a narrowly scoped local rule in
-  the file resolved by `git rev-parse --git-path info/exclude`; preserve existing
-  entries. Use shared `.gitignore` only when the project wants a team-wide rule.
-- Ignore rules do not untrack existing files. Do not alter the index, force-add
-  artifacts, relocate tracked documents or rewrite Git history to hide artifacts.
-  If a destination is tracked or cannot be configured within current permissions,
-  report the constraint and resolve a usable destination before writing there.
-- Keep artifacts within the host's permitted write locations. A configured path
-  does not grant access. Return the artifact path with a concise result and actual
-  verification; no language or storage rule requires an extra artifact.
-
-### Tools and independent skills
-
-Use the tools actually available on the current host. Prefer precise native reads
-and edits for small changes; for large or unpredictable output, use an installed
-analysis/context tool when available and derive focused results in code. Preserve
-the host's routing rules. If a preferred tool is unavailable, disclose the relevant
-limit and use a permitted alternative without installing a replacement by default.
-
-Capture relevant evidence in full before filtering or summarizing it. Preserve
-failures, exit status and source locations; do not truncate evidence before analysis
-or filter away failures. Keep summaries focused without presenting incomplete
-evidence as successful validation.
-
-For background work, prefer completion notifications or bounded waits when the
-host supports them. Avoid repeated status polling when those options are available.
-Do not assume automatic wake-up; report timeouts and failures explicitly.
-
-Specialized integrations belong to their own skills. For TypeSafe/Jev work, use
-the separately installed `typesafe-ai` skill when relevant. lazier neither copies
-its API guidance nor requires a TypeSafe call for routine engineering decisions.
+  supported external uses before removing code that looks unused. Code you move or
+  merge keeps its error handling and validation. Include only the cleanup the
+  change needs.
+- **Review.** Ground each finding in location, evidence, impact and a fix. A
+  simplicity finding needs a smaller alternative that preserves required behavior,
+  and names the mechanism's responsibility and cost. Verify any claim that code is
+  unused, redundant or speculative. A correctness or security fix may add code.
+  Separate unknowns from defects; style alone is not a finding. Leaving justified
+  code unchanged is a valid outcome.
+- **Handoff.** Briefly state the changed behavior, decisions, verification actually
+  run, and open risks. Label assumptions and checks you did not run. Create extra
+  agents, plans, reports, checklists, artifacts or review cycles only when the user
+  asks or the task needs them, and only within existing permissions.
 
 ### Explicit simplicity review
 
-Run a simplicity review only when requested; an implementation request using
-`lazier` still means implementation. Do not edit without authorization. Use the current
-diff if scope is missing, or request the artifact. Inspect relevant requirements,
-callers, and invariants. Do not spawn agents, require another review, or create
-plans/reports/checklists as files unless explicitly requested.
+Run a simplicity review only when the user asks for one; a request to implement
+with `lazier` is still an implementation request. Do not edit without
+authorization. If no scope is given, use the current diff, or ask for the artifact
+to review. Inspect the requirements, callers and invariants involved. Do not spawn
+agents, require another review, or write plans, reports or checklists as files
+unless asked.
 
-Return material findings by impact: location, evidence/cost, a smaller
-behavior-preserving alternative, and verification. Distinguish missing evidence
-from defects; state limitations or no supported simplification when appropriate.
-Do not force findings or report length. Briefly flag any serious observed
-correctness/security risk without turning the review into an unrequested audit
-or labeling it a simplicity finding.
+Report findings in order of impact, each with location, evidence or cost, a
+smaller behavior-preserving alternative, and how to verify it. Separate missing
+evidence from defects. When nothing supports a simplification, say so and state
+any limits of what you checked. Do not pad findings or length. Flag a serious
+correctness or security risk you observed in one line, without turning the review
+into an audit or calling it a simplicity finding.

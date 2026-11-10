@@ -122,10 +122,11 @@ class PackageValidationTests(unittest.TestCase):
             with ZipFile(archive) as bundle:
                 self.assertCountEqual(bundle.namelist(), [
                     "lazier/SKILL.md", "lazier/agents/openai.yaml",
-                    "lazier/references/policy.md", "lazier/LICENSE",
+                    "lazier/references/policy.md", "lazier/references/artifacts.md",
+                    "lazier/references/integrations.md", "lazier/LICENSE",
                     "lazier/provenance.json",
                 ])
-                for reference in ["policy.md"]:
+                for reference in ["policy.md", "artifacts.md", "integrations.md"]:
                     self.assertEqual(bundle.read("lazier/references/" + reference),
                                      (root / "skills/lazier/references" / reference).read_bytes())
                 self.assertEqual(bundle.read("lazier/LICENSE"), (root / "LICENSE").read_bytes())
@@ -135,7 +136,7 @@ class PackageValidationTests(unittest.TestCase):
             self.assertEqual(list(skill.rglob("SKILL.md")), [skill / "SKILL.md"])
             links = re.findall(r"\[[^\]]*\]\(([^)]+)\)",
                                (skill / "SKILL.md").read_text(encoding="utf-8"))
-            for reference in ["policy"]:
+            for reference in ["policy", "artifacts", "integrations"]:
                 self.assertIn(f"references/{reference}.md", links)
             for source in skill.rglob("*.md"):
                 for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", source.read_text(encoding="utf-8")):
@@ -146,7 +147,7 @@ class PackageValidationTests(unittest.TestCase):
             self.assertEqual(run("--build").returncode, 0)
             self.assertEqual(archive.read_bytes(), before, "Build must be reproducible")
 
-            for name in ["policy"]:
+            for name in ["policy", "artifacts", "integrations"]:
                 with self.subTest(stale_reference=name):
                     reference = root / f"skills/lazier/references/{name}.md"
                     reference.write_text(reference.read_text(encoding="utf-8") + "\nNew default.\n", encoding="utf-8")
@@ -355,7 +356,7 @@ class ArtifactIntegrityTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
             self.assertFalse((root / ".git").exists())
             with ZipFile(next((root / "dist").glob("*.zip"))) as bundle:
-                self.assertEqual(len(bundle.namelist()), 5)
+                self.assertEqual(len(bundle.namelist()), 7)
 
     def test_ci_is_standalone_and_smoke_matrix_is_not_a_model_pass(self):
         ci = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")

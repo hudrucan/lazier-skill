@@ -15,7 +15,8 @@ from zipfile import BadZipFile, ZIP_DEFLATED, ZipFile, ZipInfo
 ROOT = Path(__file__).resolve().parent.parent
 NAME = "lazier"
 SKILL = ROOT / "skills" / NAME
-VERSION = "0.10.0"
+VERSION = "0.11.0"
+REFERENCES = ("policy", "artifacts", "integrations")
 ARCHIVE = ROOT / "dist" / f"{NAME}-{VERSION}.zip"
 
 
@@ -29,6 +30,8 @@ def source_paths():
         f"{NAME}/SKILL.md": SKILL / "SKILL.md",
         f"{NAME}/agents/openai.yaml": SKILL / "agents/openai.yaml",
         f"{NAME}/references/policy.md": SKILL / "references/policy.md",
+        f"{NAME}/references/artifacts.md": SKILL / "references/artifacts.md",
+        f"{NAME}/references/integrations.md": SKILL / "references/integrations.md",
         f"{NAME}/LICENSE": ROOT / "LICENSE",
     }
 
@@ -121,8 +124,9 @@ def validate_sources(files):
     require(all(json.loads(value).strip() for value in interface.groups()),
             "Interface metadata strings must not be empty")
 
-    heading = files[f"{NAME}/references/policy.md"].decode().splitlines()[0]
-    require(f"v{VERSION}" in heading.split(), "Version heading mismatch: policy")
+    for reference in REFERENCES:
+        heading = files[f"{NAME}/references/{reference}.md"].decode().splitlines()[0]
+        require(f"v{VERSION}" in heading.split(), f"Version heading mismatch: {reference}")
     validate_links(files)
     packaged_paths = set(source_paths().values())
     for source in ROOT.rglob("*.md"):
