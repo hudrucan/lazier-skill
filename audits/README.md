@@ -9,7 +9,8 @@ the file, not in its path.
   history directories or audit indexes.
 - A missing file means unverified. Do not create placeholder results or carry
   another agent's verdict forward.
-- Use the shared [smoke cases](../tools/smoke-cases.json) unchanged. Record the
+- Use the shared [smoke cases](../tools/smoke-cases.json) unchanged, with fixtures from
+  `python3 tools/make_smoke_fixtures.py <empty-dir> --host <agent> --skill-entry <path>`. Record the
   definition revision or hash, cases run, omissions and unmet conditions.
 - Include the audit date, agent/CLI, model and reasoning setting, exact package
   version, commit and archive SHA-256, scope, summary and per-case results.
