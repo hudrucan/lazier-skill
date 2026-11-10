@@ -363,7 +363,8 @@ class ArtifactIntegrityTests(unittest.TestCase):
         self.assertIn('python3 tools/package.py --tag "$GITHUB_REF_NAME"', ci)
         self.assertIn("*.provenance.json", ci)
         matrix = json.loads((ROOT / "tools/smoke-cases.json").read_text(encoding="utf-8"))
-        self.assertEqual(matrix["status"], "pending")
+        self.assertNotIn("status", matrix, "Behavioral verdicts belong in per-agent audits")
+        self.assertNotIn("runs", matrix, "The smoke matrix contains definitions, not run history")
         cases = {case["id"]: case for case in matrix["cases"]}
         self.assertEqual(len(cases), len(matrix["cases"]))
         self.assertTrue({"ordinary", "implicit", "simplicity", "plan", "english-artifacts",

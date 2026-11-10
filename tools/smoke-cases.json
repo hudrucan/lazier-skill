@@ -1,5 +1,4 @@
 {
-  "status": "pending",
   "execution": "Run each case in a fresh session on every installed coding-agent host being evaluated, using the extracted package. Restrict writes and Git operations to disposable fixtures. Record artifact SHA-256, host/model, loaded paths, tool trace, file changes and Git status. Packaging success is separate from observed model behavior. These cases authorize no live integration calls, tool installation, credential access or changes to user configuration.",
   "cases": [
     {

@@ -37,12 +37,8 @@ Policy ownership is independent of context-mode; TypeSafe/Jev guidance stays in
 | Scope | Evidence and limits |
 | --- | --- |
 | Package and installer | Integrity, reference closure, reproducibility, safe installation and a disposable-home 0.10.0-to-0.11.0 upgrade checked. These do not prove model behavior. |
-| Codex 0.10.0 | Eleven original smoke scenarios plus independent discovery completed on CLI 0.167.0. This predates the current rubric and does not certify 0.11.0. |
-| Codex 0.11.0 candidate | Two focused trials at `559db31` exercised conditional references and an English, ignored report. Parser repair passed tests but missed a README update. Final wording changes were reviewed and passed CI, without a full model rerun. |
-| Claude Code | Author-reported discovery and focused trials in [PR #1](https://github.com/hudrucan/lazier-skill/pull/1) and [PR #2](https://github.com/hudrucan/lazier-skill/pull/2). Full matrix and private-artifact exclusion remain unverified. |
-| Antigravity and Grok | Installer mappings checked; native discovery and behavior outside current scope. |
+| Agent behavior | [Latest audits](audits/README.md) keep one record per agent, including [Codex](audits/codex.json). Each record states its tested version, exact payload, scope, results and limits. Missing agent records mean unverified. |
 
-The current [smoke matrix](tools/smoke-cases.json) has explicit pass/fail criteria
-and remains `pending`. Some Codex trials recovered from context-mode workspace
-boundary errors. Next, check the final 0.11.0 payload against that rubric on the
-hosts in scope, including documentation maintenance and integration triggers.
+The [smoke matrix](tools/smoke-cases.json) contains shared definitions, not verdicts.
+Consult the relevant agent audit for open conditions and replace it after retesting;
+do not accumulate audit history or infer results for other agents or integrations.

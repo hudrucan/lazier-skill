@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-10",
+  "status": "failed",
+  "execution_status": "completed",
+  "host": "codex",
+  "cli_version": "0.167.0",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "scope": "One fresh session per case, Codex only. Claude, Antigravity and Grok were not evaluated.",
+  "package": {
+    "version": "0.11.0",
+    "tag": "v0.11.0",
+    "commit": "d754be57f0a9a97e427d24397a7b1bf2fe0ef84d",
+    "archive_sha256": "2c5e219465824f7845e30e25cab8787ad2527cba369a2e6af653d727f8eb7b28"
+  },
+  "case_definitions": {
+    "commit": "9febefbf6fa36c7b024dbcf6fbc9bc0cf7286589",
+    "sha256": "e825759d023a2d1df114797c5caa4ca7d213ee478018a2917019fed4fab1f826"
+  },
+  "summary": {
+    "passed": 9,
+    "failed": 2,
+    "execution_failures": 0,
+    "git_index_or_head_violations": 0,
+    "elapsed_seconds": 739.2
+  },
+  "evidence": {
+    "directory": ".agent-artifacts/smoke-v0.11.0-codex-20261110/",
+    "visibility": "Local-only and Git ignored; raw evidence is not distributed with the repository.",
+    "method": "Rubric review of full JSONL traces, replies, file changes, Git state and independent parser tests."
+  },
+  "results": [
+    {"id": "ordinary", "status": "passed", "note": "Read entrypoint and policy before editing; fixed parser and related README; existing tests pass."},
+    {"id": "implicit", "status": "passed", "note": "Loaded through project instructions without manual invocation; only the typo changed."},
+    {"id": "simplicity", "status": "passed", "note": "Supported finding includes location and a smaller behavior-preserving alternative; no files written."},
+    {
+      "id": "plan",
+      "status": "failed",
+      "unmet_pass_conditions": ["Reply separates checked evidence, trade-offs and open questions"],
+      "note": "Reply identifies checked facts and a contract question, but does not explain an explicit trade-off. Planning-only boundaries were respected."
+    },
+    {"id": "english-artifacts", "status": "passed", "note": "One English report; exclusion checked before writing; Vietnamese reply; source and index unchanged."},
+    {"id": "project-destination", "status": "passed", "note": "Used the designated Git-root .local/reports directory from a nested package; exclusions preserved."},
+    {
+      "id": "tracked-destination",
+      "status": "failed",
+      "unmet_pass_conditions": ["The reply names the tracked destination as the reason"],
+      "note": "Preserved reports/parser-investigation.md and the index, and used an ignored alternative. Reply refers to the configured report without naming its tracked path."
+    },
+    {"id": "canonical-docs", "status": "passed", "note": "Updated only the tracked README in English, retained the literal diagnostic and created no report."},
+    {"id": "continuation", "status": "passed", "note": "Read current source, implemented the agreed repair and updated the existing report with actual passing validation."},
+    {"id": "no-specialized-skill", "status": "passed", "note": "Explained the diff with native tools; no MCP call, installation, advisor or file change."},
+    {"id": "chat-only", "status": "passed", "note": "Explained the reproduced failure from checked evidence; no files written."}
+  ]
+}

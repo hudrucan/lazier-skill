@@ -219,8 +219,10 @@ use temporary homes. The installer has also been exercised against the maintaine
 local installation, including a second run reporting `unchanged`.
 
 Native agent discovery and behavioral verification remain separate. The
-[smoke matrix](tools/smoke-cases.json) is pending; passing packaging tests does not
-establish activation or equivalent behavior across all agents.
+[smoke matrix](tools/smoke-cases.json) defines shared scenarios and pass/fail
+conditions. [Agent audits](audits/README.md) keep one latest result per agent, with
+the tested version in each file; absent results mean unverified. Passing packaging
+tests does not establish activation or equivalent behavior across all agents.
 
 ## License
 
