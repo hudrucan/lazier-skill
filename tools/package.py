@@ -15,7 +15,7 @@ from zipfile import BadZipFile, ZIP_DEFLATED, ZipFile, ZipInfo
 ROOT = Path(__file__).resolve().parent.parent
 NAME = "lazier"
 SKILL = ROOT / "skills" / NAME
-VERSION = "0.11.0"
+VERSION = "0.11.1"
 REFERENCES = ("policy", "artifacts", "integrations")
 ARCHIVE = ROOT / "dist" / f"{NAME}-{VERSION}.zip"
 

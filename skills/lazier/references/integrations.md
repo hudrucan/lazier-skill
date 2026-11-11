@@ -1,4 +1,4 @@
-# lazier tools and integrations v0.11.0
+# lazier tools and integrations v0.11.1
 
 Load only when you expect long output (logs, test suites, large files), work runs
 in the background, or a specialized skill or integration applies. The core policy
@@ -10,7 +10,8 @@ Use the tools the current host actually provides. Use native reads and edits for
 small changes. For long or unpredictable output, use an installed analysis or
 context tool when there is one, and derive a focused result in code. Follow the
 host's routing rules. If a preferred tool is unavailable, say what that limits and
-use a permitted alternative; do not install a replacement by default.
+use a permitted alternative. Do not install tools, use credentials or make live
+integration calls unless the user authorizes it.
 
 For background work, use completion notifications or bounded waits when the host
 supports them, and avoid repeated status polling. Do not assume the agent will wake

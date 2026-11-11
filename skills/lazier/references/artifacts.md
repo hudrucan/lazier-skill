@@ -1,4 +1,4 @@
-# lazier artifacts and continuity v0.11.0
+# lazier artifacts and continuity v0.11.1
 
 Load only when a plan, investigation, review or report must persist, or when work
 continues across sessions, hosts or review rounds. The core policy still applies.
@@ -33,7 +33,8 @@ artifact when the user asks or the task needs one, not for every chat reply.
   documented artifact location, then `.agent-artifacts/` at the repository root (or
   the project root when there is no Git). Do not pick a nested directory just
   because the agent started there.
-- Use descriptive English filenames. Update the existing artifact for the same
+- Write the artifact and its filename in English; the chat reply follows the
+  user's language (see the core policy). Update the existing artifact for the same
   topic instead of writing a new report each turn. When the directory is shared by
   several projects, name the project in the artifact.
 - Treat working artifacts inside Git as private unless the user says to commit or

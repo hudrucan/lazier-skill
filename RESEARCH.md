@@ -1,6 +1,6 @@
 # Research and compatibility notes
 
-Status reviewed 2026-11-10 for lazier 0.11.0. Sources below are pinned provenance;
+Status reviewed 2026-11-10 for lazier 0.11.1. Sources below are pinned provenance;
 they were not all re-audited for this release.
 
 ## Policy sources

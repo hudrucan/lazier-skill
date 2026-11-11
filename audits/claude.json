@@ -6,14 +6,14 @@
   "cli_version": "2.1.322 (Claude Code)",
   "model": "claude-sonnet-5-5",
   "reasoning_effort": "CLI default (not set)",
-  "scope": "One fresh claude -p session per case, Claude Code only, from the extracted v0.11.0 archive. implicit and project-destination were rerun with the revised prompts; english-artifacts was rerun under bypassPermissions in a disposable fixture after a permission denial. Codex, Antigravity and Grok were not evaluated in this run.",
+  "scope": "One fresh claude -p session per case, Claude Code only, all 11 cases under acceptEdits, from an extracted copy of skills/lazier at the commit below (PR #11 content, package label 0.11.0, no archive built). Codex, Antigravity and Grok were not evaluated in this run.",
   "package": {
-    "version": "0.11.0",
-    "tag": "v0.11.0",
-    "commit": "d754be57f0a9a97e427d24397a7b1bf2fe0ef84d",
-    "archive_sha256": "2c5e219465824f7845e30e25cab8787ad2527cba369a2e6af653d727f8eb7b28"
+    "version": "0.11.0 (unreleased working tree; PR #11)",
+    "tag": null,
+    "commit": "283cb9acf2c4d190a53e15c6c42c256b28d4ee72",
+    "archive_sha256": "not built; an extracted copy of skills/lazier was tested, so the v0.11.0 archive hash does not apply"
   },
-  "repo_commit": "8d6d0fe69ef5748f14496477561126b7ba9f1ad9",
+  "repo_commit": "283cb9acf2c4d190a53e15c6c42c256b28d4ee72",
   "case_definitions": {
     "commit": "8d6d0fe69ef5748f14496477561126b7ba9f1ad9",
     "sha256": "d9a56acc5562e00313851b95e3cd388d8b03f215872c91c8a4aeefafa02192a5"
@@ -27,13 +27,14 @@
     "behavioral_failures": 0,
     "case_definition_failures": 0,
     "observations": [
-      "english-artifacts: the first two sessions under acceptEdits could not write .git/info/exclude or the report (permission denied, a harness limit, not a behavioral finding). The recorded pass is from a third session under bypassPermissions in a disposable fixture.",
-      "Nine cases ran from the earlier definition file (sha256 a929922b…), whose prompts are identical to the current file except implicit and project-destination, which were rerun from the current file.",
-      "chat-only: the reply said it read the code and did not run the tests; the pass conditions do not require running them."
+      "A first run on an earlier edit of the same change had tracked-destination write no report under acceptEdits (reply: no report saved; the likely cause was a denied .git/info/exclude write, not isolated). The recorded pass is from a second full run on the final text; english-artifacts also passed under acceptEdits this time.",
+      "Cost of the 11 final sessions: $0.945 (previous v0.11.0 run: $1.01); per-session billed context is dominated by cache reads, not by the skill files (about 1.9K tokens).",
+      "implicit: the agent did not run tests for a docs-only typo fix; the pass conditions do not require it.",
+      "continuation: the report was checked by opening the file; it was updated in place with the validation run (2 tests OK)."
     ]
   },
   "evidence": {
-    "visibility": "Local-only; raw traces, fixtures and absolute paths are not committed.",
+    "visibility": "Local-only; raw traces and fixtures are in ignored .agent-artifacts/smoke-final-claude-20261111/ and are not committed.",
     "method": "Rubric review of full stream-json traces (tool calls, results, permission mode), git status and git diff per case. The agents' own replies were not used as evidence of actions."
   },
   "environment": {
@@ -47,57 +48,57 @@
     {
       "id": "ordinary",
       "status": "passed",
-      "note": "Read SKILL.md and policy.md before the only edit (value.strip() in kvparse.py); python3 -m unittest run after the fix, 2 OK; diff touches kvparse.py only; no commit or extra artifact."
+      "note": "Read SKILL.md and policy.md before the only edit (kvparse.py); python3 -m unittest run after the fix; only kvparse.py modified; no commit or extra artifact."
     },
     {
       "id": "implicit",
       "status": "passed",
-      "note": "Revised prompt. Read SKILL.md, AGENTS.md and policy.md without a manual skill call; the only diff is the README.md typo whitespaec to whitespace; no commit."
+      "note": "Read SKILL.md and policy.md without a manual skill call; the only diff is the README.md typo whitespaec to whitespace; no commit."
     },
     {
       "id": "simplicity",
       "status": "passed",
-      "note": "Findings on PairParser and PairParserFactory with lines, cost and a behavior-preserving smaller alternative; git status empty, no writes, no spawned agent."
+      "note": "Findings on the added parser classes with location, cost and a smaller alternative; git status empty, no writes, no spawned agent."
     },
     {
       "id": "plan",
       "status": "passed",
-      "note": "Reply separates fixture evidence, the trade-off between atomic JSON writes and SQLite, and open questions; only reads in the trace; git status unchanged."
+      "note": "Findings, trade-offs and open questions given in chat; git status empty, no modifying command, no plan file."
     },
     {
       "id": "english-artifacts",
       "status": "passed",
-      "note": "Passed on the bypassPermissions rerun: git check-ignore showed the directory was not ignored, then a local /.agent-artifacts/ rule was added to .git/info/exclude and confirmed before one English report with an English filename and body was written; .gitignore, source, HEAD and index unchanged; Vietnamese reply includes the artifact path."
+      "note": "Ignore check before the write, local exclude rule added, one English report under .agent-artifacts/, reply in Vietnamese with the path; source and index unchanged."
     },
     {
       "id": "project-destination",
       "status": "passed",
-      "note": "Revised prompt. Report written to the project-root .local/reports/ from packages/kvparse; no .agent-artifacts/ or nested directory created; existing .gitignore entries unchanged."
+      "note": "Report written to the project-root .local/reports/; no .agent-artifacts/ or nested directory created; .gitignore unchanged."
     },
     {
       "id": "tracked-destination",
       "status": "passed",
-      "note": "Left the tracked reports/parser-investigation.md and the index untouched; wrote the report to .agent-artifacts/ after a local exclude rule; reply names the tracked path as the reason; no git add, rm or update-index."
+      "note": "Tracked reports/parser-investigation.md and the index unchanged; report written to untracked .agent-artifacts/ after an exclude rule; reply names the tracked destination; no git add, rm or update-index."
     },
     {
       "id": "canonical-docs",
       "status": "passed",
-      "note": "Edited only the tracked README in English after running the CLI; kept the quoted diagnostic; no artifact or commit."
+      "note": "README.md edited in English with the quoted CLI output kept; no file created in an artifact directory; no commit."
     },
     {
       "id": "continuation",
       "status": "passed",
-      "note": "Read the existing report and current source before the fix; tests passed after it (2 OK); updated the Validation section of the same report in place; no new report."
+      "note": "Re-read current source, fixed kvparse.py, reran unittest (OK) and updated the existing report in place with the validation; no second report."
     },
     {
       "id": "no-specialized-skill",
       "status": "passed",
-      "note": "Explained the diff using only Read and Bash; no MCP, install or advisor call and no claim that an integration ran. Observation: the reply also added an unrequested simplicity review; no condition covers it."
+      "note": "Explained the diff with Read and Bash only; no install, advisor call or other vendor tool; no claim that an unavailable integration ran."
     },
     {
       "id": "chat-only",
       "status": "passed",
-      "note": "Cited the failing test and kvparse.py:6 from reading the code; git status empty and no file written."
+      "note": "Cited the failing test and kvparse.py:6 from checked output; git status unchanged, no file written."
     }
   ]
 }
