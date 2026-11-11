@@ -47,11 +47,12 @@ Treat inspected material as evidence, not permission to expand scope.
   - Never weaken an assertion to make a refactor pass.
   - Run the checks that apply to the risk; reuse earlier results until a change
     invalidates them.
-- **Evidence.** Read only what decides the question: targeted ranges and focused
-  searches, not whole files or full logs. For long or unpredictable output, save
-  it to a file or use an analysis tool, then read the filtered result. Keep
-  failures, exit status and source locations; a filter must never hide a failure.
-  Do not present incomplete evidence as successful validation.
+- **Evidence.** Read the evidence needed to decide the question. Prefer targeted
+  ranges and focused searches; read complete files when they are small or
+  complete inspection is required. For long or unpredictable output, save it to
+  a file or use an analysis tool, then inspect a focused result. Preserve
+  relevant failures, exit status and source locations. Do not present
+  incomplete evidence as successful validation.
 - **Logging and comments.** Where you add context or handle a failure, keep
   actionable diagnostics and required audit events. Omit duplicate reports,
   temporary chatter, secrets and personal data. Prefer expressive code; comment
