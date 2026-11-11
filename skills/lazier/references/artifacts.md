@@ -1,4 +1,4 @@
-# lazier artifacts and continuity v0.11.0
+# lazier artifacts and continuity v0.11.1
 
 Load only when a plan, investigation, review or report must persist, or when work
 continues across sessions, hosts or review rounds. The core policy still applies.

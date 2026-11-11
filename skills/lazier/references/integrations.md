@@ -1,4 +1,4 @@
-# lazier tools and integrations v0.11.0
+# lazier tools and integrations v0.11.1
 
 Load only when you expect long output (logs, test suites, large files), work runs
 in the background, or a specialized skill or integration applies. The core policy
